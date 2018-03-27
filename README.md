@@ -4,8 +4,10 @@
 ## Goals
 
 * Implement functionality for all API endpoints
-* Add AccountName and BudgetName parameters to Get-YNABAccount
+* Add AccountName and BudgetName parameters to Get-YNABAccount and Set-YNABDefaults
 * Add comment-based help for all functions
+* Publish to PSGallery
+* Add Pester tests
 
 ## Endpoint Progress
 
