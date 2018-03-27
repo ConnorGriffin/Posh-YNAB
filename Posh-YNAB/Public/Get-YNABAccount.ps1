@@ -40,16 +40,16 @@ function Get-YNABAccount {
                 # Return a list of accounts in each budget
                 $BudgetID.ForEach{
                     $response = Invoke-RestMethod "$uri/budgets/$_/accounts" -Headers $header
-                    $response
+                    Get-ParsedAccountJson $response.data.accounts
                 }
             }
             'Detail' {
-                # Return account details for each account in each budget
+                # Return account details for each AccountID specified
                 $BudgetID.ForEach{
                     $budget = $_
                     $AccountID.ForEach{
-                        $response = Invoke-RestMethod "$uri/budgets/$budget/$_" -Headers $header
-                        $response
+                        $response = Invoke-RestMethod "$uri/budgets/$budget/accounts/$_" -Headers $header
+                        Get-ParsedAccountJson $response.data.account
                     }
                 }
             }

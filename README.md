@@ -19,8 +19,8 @@ Attempting to implement functionality for all endpoints listed [here](https://ap
 
 ### Accounts
 The Accounts for a budget.
-- [GET] /budgets/{budget_id}/accounts
-- [GET] /budgets/{budget_id}/accounts/{account_id}
+- ~~[GET] /budgets/{budget_id}/accounts~~
+- ~~[GET] /budgets/{budget_id}/accounts/{account_id}~~
 
 ### Categories
 The Categories for a budget.
