@@ -1,4 +1,4 @@
-function Get-Account {
+function Get-YNABAccount {
     <#
     .SYNOPSIS
     Describe the function here

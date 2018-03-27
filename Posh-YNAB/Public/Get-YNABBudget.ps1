@@ -1,4 +1,4 @@
-function Get-Budget {
+function Get-YNABBudget {
     <#
     .SYNOPSIS
     Describe the function here
@@ -42,8 +42,8 @@ function Get-Budget {
                         BudgetID = $_.id
                         Name = $_.name
                         'Last Modified' = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
-                        'First Month' = $_.first_month
-                        'Last Month' = $_.last_month
+                        'First Month' = [datetime]::ParseExact($_.first_month,'yyyy-MM-dd',$null)
+                        'Last Month' = [datetime]::ParseExact($_.last_month,'yyyy-MM-dd',$null)
                         'Date Format' = $_.date_format.format
                         'Currency Format' = [Ordered]@{
                             'ISO Code' = $_.currency_format.iso_code
@@ -65,13 +65,13 @@ function Get-Budget {
                     $budget = $response.data.budget
                     $accounts = Get-ParsedAccountJson $budget.accounts
                     $payees = Get-ParsedPayeeJson $budget.payees $budget.payee_locations
-
+                    $transactions = Get-ParsedTransactionJson $budget.transactions $budget.subtransactions -ParsedPayee $payees
                     [PSCustomObject]@{
                         BudgetID = $budget.id
                         Name = $budget.name
                         'Last Modified' = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
-                        'First Month' = $budget.first_month
-                        'Last Month' = $budget.last_month
+                        'First Month' = [datetime]::ParseExact($budget.first_month,'yyyy-MM-dd',$null)
+                        'Last Month' = [datetime]::ParseExact($budget.last_month,'yyyy-MM-dd',$null)
                         'Date Format' = $budget.date_format.format
                         'Currency Format' = [PSCustomObject]@{
                             'ISO Code' = $budget.currency_format.iso_code
@@ -85,6 +85,13 @@ function Get-Budget {
                         }
                         Accounts = $accounts
                         Payees = $payees
+                        Transactions = $transactions
+                        <# TODO: Implement:
+                        Categories =
+                        'Category Groups' =
+                        Months =
+                        'Scheduled Transactions' = (scheduled subtransactions under this)
+                        #>
                     }
                 }
             }

@@ -18,8 +18,8 @@ if (!(Test-Path $profilePath)) {
 }
 
 # These are referenced below and in Set-YNABDefaults
-$budgetFunctions = @('Get-Budget','Get-Account')
-$tokenFunctions = @('Get-Budget','Get-Account')
+$budgetFunctions = @('Get-YNABBudget','Get-YNABAccount')
+$tokenFunctions = @('Get-YNABBudget','Get-YNABAccount')
 
 # Import the config, if one has been set
 if (Test-Path "$profilePath\Defaults.xml") {
