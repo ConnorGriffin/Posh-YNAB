@@ -17,13 +17,26 @@ if (!(Test-Path $profilePath)) {
     New-Item -Path $profilePath -Type Directory | Out-Null
 }
 
-# Import the config, if one has been set
-if (Test-Path "$profilePath\DefaultBudget.txt") {
-    $defaultBudget = Get-Content "$profilePath\DefaultBudget.txt"
+# These are referenced below and in Set-YNABDefaults
+$budgetFunctions = @('Get-Budget','Get-Account')
+$tokenFunctions = @('Get-Budget','Get-Account')
 
-    # Set default parameters for the rest of the script functions
-    $global:PSDefaultParameterValues.Remove('Get-Budget:ID')
-    $global:PSDefaultParameterValues += @{
-        'Get-Budget:ID' = $defaultBudget
+# Import the config, if one has been set
+if (Test-Path "$profilePath\Defaults.xml") {
+    $defaults = Import-Clixml "$profilePath\Defaults.xml"
+    $BudgetID = $defaults.GetEnumerator().Where{$_.Name -eq 'BudgetID'}.Value
+    $Token = $defaults.GetEnumerator().Where{$_.Name -eq 'Token'}.Value
+
+    # Set module parameter defaults
+    if ($BudgetID) {
+        $budgetFunctions.ForEach{
+            $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
+        }
+    }
+
+    if ($Token) {
+        $tokenFunctions.ForEach{
+            $global:PSDefaultParameterValues["${_}:Token"] = $Token
+        }
     }
 }
