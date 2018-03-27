@@ -9,3 +9,21 @@ $functions.ForEach{
 
 # Set module variables
 $moduleRoot = $PSScriptRoot
+$uri = 'https://api.youneedabudget.com/v1'
+
+# Create Profiles path if it does not exist
+$profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
+if (!(Test-Path $profilePath)) {
+    New-Item -Path $profilePath -Type Directory | Out-Null
+}
+
+# Import the config, if one has been set
+if (Test-Path "$profilePath\DefaultBudget.txt") {
+    $defaultBudget = Get-Content "$profilePath\DefaultBudget.txt"
+
+    # Set default parameters for the rest of the script functions
+    $global:PSDefaultParameterValues.Remove('Get-Budget:ID')
+    $global:PSDefaultParameterValues += @{
+        'Get-Budget:ID' = $defaultBudget
+    }
+}
