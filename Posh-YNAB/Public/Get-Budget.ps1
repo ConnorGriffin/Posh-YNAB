@@ -13,11 +13,16 @@ function Get-Budget {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='List')]
     param(
         [Parameter(Mandatory=$true)]
         [String]$Token,
-        [String]$ID
+
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
+        [String[]]$BudgetID,
+
+        [Parameter(ParameterSetName='List')]
+        [Switch]$ListAll
     )
 
     begin {
@@ -27,34 +32,62 @@ function Get-Budget {
     }
 
     process {
-        # Return a list of budgets if no ID is specified
-        if (!$ID) {
-            $response = Invoke-RestMethod "$uri/budgets" -Headers $header
-            $budgets = $response.data.budgets
-            $budgets.ForEach{
-                [PSCustomObject]@{
-                    ID = $_.id
-                    Name = $_.name
-                    'Last Modified' = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
-                    'First Month' = $_.first_month
-                    'Last Month' = $_.last_month
-                    'Date Format' = $_.date_format.format
-                    'Currency Format' = [Ordered]@{
-                        'ISO Code' = $_.currency_format.iso_code
-                        'Example Format' = $_.currency_format.example_format
-                        'Decimal Digits' = $_.currency_format.decimal_digits
-                        'Decimal Separator' = $_.currency_format.decimal_separator
-                        'Symbol First' = $_.currency_format.symbol_first
-                        'Group Separator' = $_.currency_format.group_separator
-                        'Currency Symbol' = $_.currency_format.currency_symbol
-                        'Display Symbol' = $_.currency_format.display_symbol
+        switch ($PsCmdlet.ParameterSetName) {
+            'List' {
+                # Return a list of budgets if no ID is specified or if ListAvailable is supplied
+                $response = Invoke-RestMethod "$uri/budgets" -Headers $header
+                $budgets = $response.data.budgets
+                $budgets.ForEach{
+                    [PSCustomObject]@{
+                        BudgetID = $_.id
+                        Name = $_.name
+                        'Last Modified' = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
+                        'First Month' = $_.first_month
+                        'Last Month' = $_.last_month
+                        'Date Format' = $_.date_format.format
+                        'Currency Format' = [Ordered]@{
+                            'ISO Code' = $_.currency_format.iso_code
+                            'Example Format' = $_.currency_format.example_format
+                            'Decimal Digits' = $_.currency_format.decimal_digits
+                            'Decimal Separator' = $_.currency_format.decimal_separator
+                            'Symbol First' = $_.currency_format.symbol_first
+                            'Group Separator' = $_.currency_format.group_separator
+                            'Currency Symbol' = $_.currency_format.currency_symbol
+                            'Display Symbol' = $_.currency_format.display_symbol
+                        }
                     }
                 }
             }
-        }
-        else {
-            $response = Invoke-RestMethod "$uri/budgets/$ID" -Headers $header
-            $response
+            'Detail' {
+                # Return details of each provided BudgetID
+                $BudgetID.ForEach{
+                    $response = Invoke-RestMethod "$uri/budgets/$_" -Headers $header
+                    $budget = $response.data.budget
+                    $accounts = Get-ParsedAccountJson $budget.accounts
+                    $payees = Get-ParsedPayeeJson $budget.payees $budget.payee_locations
+
+                    [PSCustomObject]@{
+                        BudgetID = $budget.id
+                        Name = $budget.name
+                        'Last Modified' = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
+                        'First Month' = $budget.first_month
+                        'Last Month' = $budget.last_month
+                        'Date Format' = $budget.date_format.format
+                        'Currency Format' = [PSCustomObject]@{
+                            'ISO Code' = $budget.currency_format.iso_code
+                            'Example Format' = $budget.currency_format.example_format
+                            'Decimal Digits' = $budget.currency_format.decimal_digits
+                            'Decimal Separator' = $budget.currency_format.decimal_separator
+                            'Symbol First' = $budget.currency_format.symbol_first
+                            'Group Separator' = $budget.currency_format.group_separator
+                            'Currency Symbol' = $budget.currency_format.currency_symbol
+                            'Display Symbol' = $budget.currency_format.display_symbol
+                        }
+                        Accounts = $accounts
+                        Payees = $payees
+                    }
+                }
+            }
         }
     }
 }
