@@ -15,11 +15,14 @@ function Get-YNABBudget {
     #>
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='DetailByName')]
+        [String[]]$BudgetName,
+
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
+        [String[]]$BudgetID,
+
         [Parameter(Mandatory=$true)]
         [String]$Token,
-
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
-        [String[]]$BudgetID,
 
         [Parameter(ParameterSetName='List')]
         [Switch]$ListAll
@@ -94,6 +97,12 @@ function Get-YNABBudget {
                         #>
                     }
                 }
+            }
+            'DetailByName' {
+                # IF a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
+                $budgets = Get-YNABBudget -Token $Token -ListAll
+                $budgetId = $budgets.Where{$_.Name -eq $BudgetName}.BudgetID
+                Get-YNABBudget -BudgetId $budgetId -Token $Token
             }
         }
     }
