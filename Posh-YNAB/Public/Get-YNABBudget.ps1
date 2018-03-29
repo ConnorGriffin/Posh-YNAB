@@ -25,16 +25,23 @@ function Get-YNABBudget {
         [String]$Token,
 
         [Parameter(ParameterSetName='List')]
-        [Switch]$ListAll
+        [Switch]$List
     )
 
     begin {
         # Set the default header value for Invoke-RestMethod
         $header =  Get-Header $Token
+        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
     }
 
     process {
-        switch ($PsCmdlet.ParameterSetName) {
+        # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
+        if ($BudgetName) {
+            $budgets = Get-YNABBudget -Token $Token -ListAll
+            $budgetId = $budgets.Where{$_.Name -eq $BudgetName}.BudgetID
+        }
+
+        switch -Wildcard ($PsCmdlet.ParameterSetName) {
             'List' {
                 # Return a list of budgets if no ID is specified or if ListAvailable is supplied
                 $response = Invoke-RestMethod "$uri/budgets" -Headers $header
@@ -62,7 +69,7 @@ function Get-YNABBudget {
                     }
                 }
             }
-            'DetailByID' {
+            'Detail*' {
                 # Return details of each provided BudgetID
                 $BudgetID.ForEach{
                     $response = Invoke-RestMethod "$uri/budgets/$_" -Headers $header
@@ -99,14 +106,6 @@ function Get-YNABBudget {
                             #>
                         }
                     }
-                }
-            }
-            'DetailByName' {
-                # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
-                $budgets = Get-YNABBudget -Token $Token -ListAll
-                $budgetId = $budgets.Where{$_.Name -eq $BudgetName}.BudgetID
-                if ($budgetId) {
-                    Get-YNABBudget -BudgetId $budgetId -Token $Token
                 }
             }
         }

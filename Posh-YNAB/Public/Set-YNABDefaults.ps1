@@ -24,7 +24,9 @@ function Set-YNABDefaults {
         [String]$Token
     )
 
-    begin {}
+    begin {
+        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+    }
 
     process {
         # Set module parameter defaults. This is also done on module import once this command has been run once.

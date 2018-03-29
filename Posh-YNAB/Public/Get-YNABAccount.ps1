@@ -15,15 +15,14 @@ function Get-YNABAccount {
     #>
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
-        [Parameter(Mandatory=$true)]
-        [String]$Token,
-
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountName')]
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountID')]
+        [Parameter(ParameterSetName='List')]
         [String]$BudgetName,
 
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountName')]
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountID')]
+        [Parameter(ParameterSetName='List')]
         [String]$BudgetID,
 
         [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,AccountName')]
@@ -34,37 +33,46 @@ function Get-YNABAccount {
         [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,AccountID')]
         [String[]]$AccountID,
 
+        [Parameter(Mandatory=$true)]
+        [String]$Token,
+
         [Parameter(ParameterSetName='List')]
-        [Switch]$ListAll
+        [Switch]$List
     )
 
     begin {
         # Set the default header value for Invoke-RestMethod
-        $header =  Get-Header $Token
+        $header = Get-Header $Token`
+        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
     }
 
     process {
+        # Get the budget IDs if the budget was specified by name
+        if ($BudgetName) {
+            $budgets = Get-YNABBudget -List -Token $Token
+            $BudgetID = $budgets.Where{$_.Name -like $BudgetName}.BudgetID
+        }
+
+        # Get the account ID if the account was specified by name
+        if ($AccountName) {
+            $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
+            $AccountID = $AccountName.ForEach{
+                $name = $_
+                $accounts.Where{$_.Name -like $name}.AccountID
+            }
+        }
+
         switch -Wildcard ($PsCmdlet.ParameterSetName) {
             'List' {
-                # Return a list of accounts in each budget
-                $BudgetID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$_/accounts" -Headers $header
-                    if ($response) {
-                        Get-ParsedAccountJson $response.data.accounts
-                    }
+                $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts" -Headers $header
+                if ($response) {
+                    Get-ParsedAccountJson $response.data.accounts
                 }
             }
             'Detail*' {
-                # Set the paramaters based on the provided values, using parametersets to make sure we don't get conflicting variables
-                $params = @{}
-                if ($BudgetName) {$params.BudgetName = $BudgetName}
-                elseif ($BudgetID) {$params.BudgetID = $BudgetID}
-                if ($AccountName) {$params.AccountName = $AccountName}
-                elseif ($AccountID) {$params.AccountID = $AccountID}
-
                 # Return account details for each AccountID specified
                 $AccountID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$budget/accounts/$_" -Headers $header
+                    $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts/$_" -Headers $header
                     if ($response) {
                         Get-ParsedAccountJson $response.data.account
                     }
