@@ -13,7 +13,7 @@ function Get-YNABUser {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='List')]
+    [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
         [String]$Token
@@ -21,7 +21,7 @@ function Get-YNABUser {
 
     begin {
         # Set the default header value for Invoke-RestMethod
-        $header =  Get-Header $Token
+        $header = Get-Header $Token
     }
 
     process {
