@@ -29,21 +29,17 @@ function Set-YNABDefaults {
     }
 
     process {
-        # Set module parameter defaults. This is also done on module import once this command has been run once.
-        if ($BudgetName) {
-            $budgetFunctions.ForEach{
+        # Set module parameter defaults
+        $allFunctions.ForEach{
+            $parameters = (Get-Command $_).Parameters
+
+            if ($BudgetName -and $parameters.BudgetName) {
                 $global:PSDefaultParameterValues["${_}:BudgetName"] = $BudgetName
             }
-        }
-
-        if ($BudgetID) {
-            $budgetFunctions.ForEach{
+            if ($BudgetID -and $parameters.BudgetID) {
                 $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
             }
-        }
-
-        if ($Token) {
-            $tokenFunctions.ForEach{
+            if ($Token -and $parameters.Token) {
                 $global:PSDefaultParameterValues["${_}:Token"] = $Token
             }
         }

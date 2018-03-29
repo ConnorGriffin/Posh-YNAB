@@ -19,6 +19,7 @@ if (!(Test-Path $profilePath)) {
 }
 
 # These are referenced below and in Set-YNABDefaults
+$allFunctions = ('Get-YNABBudget','Get-YNABAccount','Get-YNABCategory','Get-YNABUser','Set-YNABDefaults')
 $budgetFunctions = @('Get-YNABBudget','Get-YNABAccount')
 $tokenFunctions = @('Get-YNABBudget','Get-YNABAccount','Get-YNABUser')
 
@@ -30,20 +31,16 @@ if (Test-Path "$profilePath\Defaults.xml") {
     $Token = $defaults.GetEnumerator().Where{$_.Name -eq 'Token'}.Value
 
     # Set module parameter defaults
-    if ($BudgetName) {
-        $budgetFunctions.ForEach{
+    $allFunctions.ForEach{
+        $parameters = (Get-Command $_).Parameters
+
+        if ($BudgetName -and $parameters.BudgetName) {
             $global:PSDefaultParameterValues["${_}:BudgetName"] = $BudgetName
         }
-    }
-
-    if ($BudgetID) {
-        $budgetFunctions.ForEach{
+        if ($BudgetID -and $parameters.BudgetID) {
             $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
         }
-    }
-
-    if ($Token) {
-        $tokenFunctions.ForEach{
+        if ($Token -and $parameters.Token) {
             $global:PSDefaultParameterValues["${_}:Token"] = $Token
         }
     }
