@@ -14,7 +14,7 @@
 Attempting to implement functionality for all endpoints listed [here](https://api.youneedabudget.com/v1#/).
 
 ### User
-- [GET] /user
+- ~~[GET] /user~~
 
 ### Budgets
 - ~~[GET] /budgets~~
