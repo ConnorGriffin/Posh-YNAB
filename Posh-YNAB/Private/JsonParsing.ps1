@@ -105,66 +105,106 @@ function Get-ParsedTransactionJson {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='TransactionResponse')]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline)]
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline,ParameterSetName='TransactionResponse')]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Detail')]
         [Object[]]$Transaction,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline)]
+        [Parameter(Position=1,ParameterSetName='Detail')]
         [Object[]]$Subtransaction,
 
-        [Parameter(Mandatory=$false,ValueFromPipeline)]
+        [Parameter(Position=2,ParameterSetName='Detail')]
         [Object[]]$Payee,
 
-        [Parameter(Mandatory=$false,ValueFromPipeline)]
+        [Parameter(Position=3,ParameterSetName='Detail')]
         [Object[]]$PayeeLocation,
 
-
-        [Parameter(Mandatory=$false,ValueFromPipeline)]
+        [Parameter(Position=4,ParameterSetName='Detail')]
         [Object[]]$ParsedPayee
     )
 
-    begin {}
+    begin {
+        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+    }
 
     process {
-        # If no ParsedPayee data is provided, generate it
-        if (!$ParsedPayee -and $Payee) {
-            $ParsedPayee = Get-ParsedPayeeJson $Payee $PayeeLocation
-        }
+        switch ($PSCmdlet.ParameterSetName) {
+            'Detail' {
+                # If no ParsedPayee data is provided, generate it
+                if (!$ParsedPayee -and $Payee) {
+                    $ParsedPayee = Get-ParsedPayeeJson $Payee $PayeeLocation
+                }
 
-        $Transaction.ForEach{
-            $transId = $_.id
-            $payeeId = $_.payee_id
-            $payee = $ParsedPayee.Where{$_.PayeeId -eq $payeeId}
+                $Transaction.ForEach{
+                    $transId = $_.id
+                    $payeeId = $_.payee_id
+                    $payee = $ParsedPayee.Where{$_.PayeeId -eq $payeeId}
 
-            # Build an object of longitude/latidude data for the current payee
-            $subtrans = $Subtransaction.Where{$_.transaction_id -eq $transId}.ForEach{
-                $payeeId = $_.payee_id
-                $subPayee = $ParsedPayee.Where{$_.PayeeId -eq $payeeId}
+                    # Build an object of longitude/latidude data for the current payee
+                    $subtrans = $Subtransaction.Where{$_.transaction_id -eq $transId}.ForEach{
+                        $payeeId = $_.payee_id
+                        $subPayee = $ParsedPayee.Where{$_.PayeeId -eq $payeeId}
 
-                [PSCustomObject]@{
-                    Amount = ([double]$_.amount / 1000)
-                    Memo = $_.memo
-                    Payee = $subPayee.Name
-                    #Category
-                    PayeeID = $subPayee.PayeeId
-                    #CategoryID
+                        [PSCustomObject]@{
+                            Amount = ([double]$_.amount / 1000)
+                            Memo = $_.memo
+                            Payee = $subPayee.Name
+                            #Category
+                            PayeeID = $subPayee.PayeeId
+                            #CategoryID
+                        }
+                    }
+
+                    # Return the formatted transaction data
+                    [PSCustomObject]@{
+                        Date = [datetime]::ParseExact($_.date,'yyyy-MM-dd',$null)
+                        Amount = ([double]$_.amount / 1000)
+                        Memo = $_.memo
+                        Cleared = $_.cleared
+                        Approved = $_.approved
+                        #account
+                        Payee = $payee.Name
+                        #Category
+                        PayeeID = $payee.PayeeId
+                        #CategoryID
+                        Subtransactions = $subtrans
+                    }
                 }
             }
+            'TransactionResponse' {
+                $Transaction.ForEach{
+                    # Build an object of longitude/latidude data for the current payee
+                    $subtrans = $_.subtransaction.ForEach{
+                        [PSCustomObject]@{
+                            Amount = ([double]$_.amount / 1000)
+                            Memo = $_.memo
+                            Payee = $_.payee_name
+                            Category = $_.category_name
+                            Account = $_.account_name
+                            PayeeID = $_.payee_id
+                            CategoryID = $_.category_id
+                            AccountID = $_.account_id
+                        }
+                    }
 
-            # Return the formatted transaction data
-            [PSCustomObject]@{
-                Date = [datetime]::ParseExact($_.date,'yyyy-MM-dd',$null)
-                Amount = ([double]$_.amount / 1000)
-                Memo = $_.memo
-                Cleared = $_.cleared
-                Approved = $_.approved
-                #account
-                Payee = $payee.Name
-                #Category
-                PayeeID = $payee.PayeeId
-                #CategoryID
-                Subtransactions = $subtrans
+                    # Return the formatted transaction data
+                    [PSCustomObject]@{
+                        Date = [datetime]::ParseExact($_.date,'yyyy-MM-dd',$null)
+                        Amount = ([double]$_.amount / 1000)
+                        Memo = $_.memo
+                        Cleared = $_.cleared
+                        Approved = $_.approved
+                        FlagColor = $_.flag_color
+                        Payee = $_.payee_name
+                        Category = $_.category_name
+                        Account = $_.account_name
+                        PayeeID = $_.payee_id
+                        CategoryID = $_.category_id
+                        AccountID = $_.account_id
+                        Subtransactions = $subtrans
+                    }
+                }
             }
         }
     }

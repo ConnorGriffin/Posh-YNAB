@@ -99,17 +99,16 @@ function Add-YNABTransaction {
         }
 
         # Add the optionbal parameters
-        if ($PayeeName) {$body['payee_name'] = $PayeeName}
-        elseif ($PayeeID) {$body['payee_id'] = $PayeeID}
-        
-        if ($Memo) {$body['memo'] = $Memo}
-        if ($Cleared) {$body['cleared'] = 'cleared'}
-        if ($FlagColor) {$body['approved'] = $FlagColor}
+        if ($PayeeID) {$body.transaction.payee_id = $PayeeID}
+        elseif ($PayeeName) {$body.transaction.payee_name = $PayeeName}
+
+        if ($Memo) {$body.transaction.memo = $Memo}
+        if ($Cleared) {$body.transaction.cleared = 'cleared'}
+        if ($FlagColor) {$body.transaction.approved = $FlagColor}
 
         $response = Invoke-RestMethod "$uri/budgets/$BudgetID/transactions" -Headers $header -Body ($body | ConvertTo-Json) -Method 'POST'
         if ($response) {
-            $response
-            #Get-ParsedTransactionJson $response.data.accounts
+            Get-ParsedTransactionJson $response.data.transaction
         }
     }
 }

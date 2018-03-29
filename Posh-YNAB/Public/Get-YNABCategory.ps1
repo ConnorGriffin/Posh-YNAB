@@ -13,16 +13,16 @@ function Get-YNABCategory {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='List')]
+    [CmdletBinding(DefaultParameterSetName='List:BudgetID')]
     param(
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,CategoryName')]
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,CategoryID')]
-        [Parameter(ParameterSetName='List')]
+        [Parameter(ParameterSetName='List:BudgetName')]
         [String]$BudgetName,
 
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,CategoryName')]
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,CategoryID')]
-        [Parameter(ParameterSetName='List')]
+        [Parameter(ParameterSetName='List:BudgetID')]
         [String]$BudgetID,
 
         [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,CategoryName')]
@@ -36,7 +36,8 @@ function Get-YNABCategory {
         [Parameter(Mandatory=$true)]
         [String]$Token,
 
-        [Parameter(ParameterSetName='List')]
+        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(ParameterSetName='List:BudgetID')]
         [Switch]$List
     )
 
@@ -63,7 +64,7 @@ function Get-YNABCategory {
         }
 
         switch -Wildcard ($PsCmdlet.ParameterSetName) {
-            'List' {
+            'List*' {
                 $response = Invoke-RestMethod "$uri/budgets/$BudgetID/categories" -Headers $header
                 if ($response) {
                     Get-ParsedCategoryJson $response.data.category_groups.categories
