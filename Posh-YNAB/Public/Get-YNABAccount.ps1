@@ -31,7 +31,6 @@ function Get-YNABAccount {
     begin {
         # Set the default header value for Invoke-RestMethod
         $header =  Get-Header $Token
-        $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
     }
 
     process {

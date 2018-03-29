@@ -9,6 +9,7 @@ $functions.ForEach{
 
 # Set module variables
 $moduleRoot = $PSScriptRoot
+$dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
 # Create Profiles path if it does not exist
