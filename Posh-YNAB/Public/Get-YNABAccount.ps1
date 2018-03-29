@@ -18,10 +18,20 @@ function Get-YNABAccount {
         [Parameter(Mandatory=$true)]
         [String]$Token,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountName')]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountID')]
+        [String]$BudgetName,
+
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountName')]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountID')]
         [String]$BudgetID,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
+        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,AccountName')]
+        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,AccountName')]
+        [String[]]$AccountName,
+
+        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,AccountID')]
+        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,AccountID')]
         [String[]]$AccountID,
 
         [Parameter(ParameterSetName='List')]
@@ -34,7 +44,7 @@ function Get-YNABAccount {
     }
 
     process {
-        switch ($PsCmdlet.ParameterSetName) {
+        switch -Wildcard ($PsCmdlet.ParameterSetName) {
             'List' {
                 # Return a list of accounts in each budget
                 $BudgetID.ForEach{
@@ -44,15 +54,19 @@ function Get-YNABAccount {
                     }
                 }
             }
-            'Detail' {
+            'Detail*' {
+                # Set the paramaters based on the provided values, using parametersets to make sure we don't get conflicting variables
+                $params = @{}
+                if ($BudgetName) {$params.BudgetName = $BudgetName}
+                elseif ($BudgetID) {$params.BudgetID = $BudgetID}
+                if ($AccountName) {$params.AccountName = $AccountName}
+                elseif ($AccountID) {$params.AccountID = $AccountID}
+
                 # Return account details for each AccountID specified
-                $BudgetID.ForEach{
-                    $budget = $_
-                    $AccountID.ForEach{
-                        $response = Invoke-RestMethod "$uri/budgets/$budget/accounts/$_" -Headers $header
-                        if ($response) {
-                            Get-ParsedAccountJson $response.data.account
-                        }
+                $AccountID.ForEach{
+                    $response = Invoke-RestMethod "$uri/budgets/$budget/accounts/$_" -Headers $header
+                    if ($response) {
+                        Get-ParsedAccountJson $response.data.account
                     }
                 }
             }

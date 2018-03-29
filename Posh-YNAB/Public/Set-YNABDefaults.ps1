@@ -13,10 +13,10 @@ function Set-YNABDefaults {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='ByName')]
+    [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByName')]
-        [String$BudgetName,
+        [String]$BudgetName,
 
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByID')]
         [String]$BudgetID,
@@ -30,7 +30,7 @@ function Set-YNABDefaults {
         # Set module parameter defaults. This is also done on module import once this command has been run once.
         if ($BudgetName) {
             $budgetFunctions.ForEach{
-                $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetName
+                $global:PSDefaultParameterValues["${_}:BudgetName"] = $BudgetName
             }
         }
 
