@@ -37,7 +37,7 @@ function Get-YNABBudget {
     process {
         # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
         if ($BudgetName) {
-            $budgets = Get-YNABBudget -Token $Token -ListAll
+            $budgets = Get-YNABBudget -Token $Token -List
             $budgetId = $budgets.Where{$_.Name -eq $BudgetName}.BudgetID
         }
 
