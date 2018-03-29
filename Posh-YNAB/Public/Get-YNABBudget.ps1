@@ -18,7 +18,7 @@ function Get-YNABBudget {
         [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='DetailByName')]
         [String[]]$BudgetName,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='DetailByID')]
         [String[]]$BudgetID,
 
         [Parameter(Mandatory=$true)]
@@ -62,7 +62,7 @@ function Get-YNABBudget {
                     }
                 }
             }
-            'Detail' {
+            'DetailByID' {
                 # Return details of each provided BudgetID
                 $BudgetID.ForEach{
                     $response = Invoke-RestMethod "$uri/budgets/$_" -Headers $header

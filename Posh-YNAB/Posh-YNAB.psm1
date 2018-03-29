@@ -29,6 +29,12 @@ if (Test-Path "$profilePath\Defaults.xml") {
     $Token = $defaults.GetEnumerator().Where{$_.Name -eq 'Token'}.Value
 
     # Set module parameter defaults
+    if ($BudgetName) {
+        $budgetFunctions.ForEach{
+            $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetName
+        }
+    }
+    
     if ($BudgetID) {
         $budgetFunctions.ForEach{
             $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID

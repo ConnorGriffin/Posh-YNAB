@@ -19,7 +19,7 @@ function Get-YNABAccount {
         [String]$Token,
 
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true)]
-        [String[]]$BudgetID,
+        [String]$BudgetID,
 
         [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
         [String[]]$AccountID,
