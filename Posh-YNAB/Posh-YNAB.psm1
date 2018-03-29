@@ -1,47 +1,66 @@
-# Get public and private function definition files.
-$functions = Get-ChildItem -Path $PSScriptRoot\*\*.ps1 -ErrorAction SilentlyContinue
-
-# Dot source the files
-$functions.FullName.ForEach{
-    try {. $_}
-    catch {Write-Error -Message "Failed to import function $_"}
-}
-
-# Set module variables
+# Set module-scoped variables used by the module in other places
+$parameters = @('BudgetName','BudgetID','Token')
 $moduleRoot = $PSScriptRoot
+$moduleName = 'Posh-YNAB'
 $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
-# Create Profiles path if it does not exist
+# Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used elsewhere
+function Set-FunctionDefaults {
+    Param(
+        $File,
+        $Parameters,
+        $Defaults
+    )
+
+    $params = @()
+
+    # Add the function to the parameter arrays based on its accepted parameters
+    $functionParams = (Get-Command $File.BaseName).Parameters
+
+    # Iterate through the supplied $Parameters
+    foreach ($paramName in $Parameters) {
+        if ($functionParams.$paramName) {
+            # If the parameter is accepted by the function, add it to an array
+            $params += $paramName
+
+            # Set the default value for the function:parameter pair if Defaults contains one
+            if ($Defaults) {
+                $default = $Defaults.GetEnumerator().Where{$_.Name -eq $paramName}.Value
+                if ($default) {
+                    $PSDefaultParameterValues["$($File.BaseName):$paramName"] = $default
+                }
+            }
+        }
+    }
+
+    # Return an object with the function and its accepted parameters. This is used by ArgumentCompleters
+    [PSCustomObject]@{
+        Function = $File.BaseName
+        Parameter = $params
+    }
+}
+
+# Create Profiles path if it does not exist, if it does, try importing the config
 $profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
-if (!(Test-Path $profilePath)) {
+if (Test-Path $profilePath) {
+    # Import the config, if one has been set
+    try {$defaults = Import-Clixml "$profilePath\Defaults.xml"}
+    catch {}
+} else {
     New-Item -Path $profilePath -Type Directory | Out-Null
 }
 
-# These are referenced below and in Set-YNABDefaults
-$allFunctions = ('Get-YNABBudget','Get-YNABAccount','Get-YNABCategory','Get-YNABUser','Set-YNABDefaults')
-$budgetFunctions = @('Get-YNABBudget','Get-YNABAccount')
-$tokenFunctions = @('Get-YNABBudget','Get-YNABAccount','Get-YNABUser')
+# Import public functions first, we'll import private ones later
+$publicFunctions = (Get-ChildItem "$PSScriptRoot\Public\*.ps1")
+$paramsByFunction = $publicFunctions.ForEach{
+    . $_.Fullname
+    Set-FunctionDefaults $_ $parameters $defaults
+    Export-ModuleMember -Function $_.BaseName
+}
 
-# Import the config, if one has been set
-if (Test-Path "$profilePath\Defaults.xml") {
-    $defaults = Import-Clixml "$profilePath\Defaults.xml"
-    $BudgetName= $defaults.GetEnumerator().Where{$_.Name -eq 'BudgetName'}.Value
-    $BudgetID = $defaults.GetEnumerator().Where{$_.Name -eq 'BudgetID'}.Value
-    $Token = $defaults.GetEnumerator().Where{$_.Name -eq 'Token'}.Value
-
-    # Set module parameter defaults
-    $allFunctions.ForEach{
-        $parameters = (Get-Command $_).Parameters
-
-        if ($BudgetName -and $parameters.BudgetName) {
-            $global:PSDefaultParameterValues["${_}:BudgetName"] = $BudgetName
-        }
-        if ($BudgetID -and $parameters.BudgetID) {
-            $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
-        }
-        if ($Token -and $parameters.Token) {
-            $global:PSDefaultParameterValues["${_}:Token"] = $Token
-        }
-    }
+# Import private functions, nothing fancy needed here
+(Get-ChildItem "$PSScriptRoot\Private\*.ps1").ForEach{
+    try {. $_.FullName}
+    catch {Write-Error -Message "Failed to import function $_"}
 }

@@ -29,22 +29,10 @@ function Set-YNABDefaults {
     }
 
     process {
-        # Set module parameter defaults
-        $allFunctions.ForEach{
-            $parameters = (Get-Command $_).Parameters
-
-            if ($BudgetName -and $parameters.BudgetName) {
-                $global:PSDefaultParameterValues["${_}:BudgetName"] = $BudgetName
-            }
-            if ($BudgetID -and $parameters.BudgetID) {
-                $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
-            }
-            if ($Token -and $parameters.Token) {
-                $global:PSDefaultParameterValues["${_}:Token"] = $Token
-            }
-        }
-
         # Export the provided parameters for the module import to read them later
         $MyInvocation.BoundParameters | Export-Clixml "$profilePath\Defaults.xml"
+
+        # Re-import the module to reload the defaults
+        Import-Module "$moduleRoot\$moduleName.psm1" -Global -Force
     }
 }
