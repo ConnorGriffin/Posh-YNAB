@@ -29,12 +29,12 @@ function Get-ParsedAccountJson {
                 AccountID = $_.id
                 Name = $_.name
                 Type = $_.type
-                'On Budget' = $_.on_budget
+                OnBudget = $_.on_budget
                 Closed = $_.closed
                 Note = $_.note
                 Balance = ([double]$_.balance / 1000)
-                'Cleared Balance' = ([double]$_.cleared_balance / 1000)
-                'Uncleared Balance' = ([double]$_.uncleared_balance / 1000)
+                ClearedBalance = ([double]$_.cleared_balance / 1000)
+                UnclearedBalance = ([double]$_.uncleared_balance / 1000)
             }
         }
     }
@@ -83,7 +83,7 @@ function Get-ParsedPayeeJson {
             [PSCustomObject]@{
                 PayeeID = $payeeId
                 Name = $_.name
-                'Transfer AccountID' = $_.transfer_account_id
+                TransferAccountID = $_.transfer_account_id
                 Location = $location
             }
         }
