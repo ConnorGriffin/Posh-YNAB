@@ -51,19 +51,19 @@ function Get-YNABBudget {
                         [PSCustomObject]@{
                             BudgetID = $_.id
                             Name = $_.name
-                            'Last Modified' = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
-                            'First Month' = [datetime]::ParseExact($_.first_month,'yyyy-MM-dd',$null)
-                            'Last Month' = [datetime]::ParseExact($_.last_month,'yyyy-MM-dd',$null)
-                            'Date Format' = $_.date_format.format
-                            'Currency Format' = [Ordered]@{
-                                'ISO Code' = $_.currency_format.iso_code
-                                'Example Format' = $_.currency_format.example_format
-                                'Decimal Digits' = $_.currency_format.decimal_digits
-                                'Decimal Separator' = $_.currency_format.decimal_separator
-                                'Symbol First' = $_.currency_format.symbol_first
-                                'Group Separator' = $_.currency_format.group_separator
-                                'Currency Symbol' = $_.currency_format.currency_symbol
-                                'Display Symbol' = $_.currency_format.display_symbol
+                            LastModified = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
+                            FirstMonth = [datetime]::ParseExact($_.first_month,'yyyy-MM-dd',$null)
+                            LastMonth = [datetime]::ParseExact($_.last_month,'yyyy-MM-dd',$null)
+                            DateFormat = $_.date_format.format
+                            CurrencyFormat = [Ordered]@{
+                                ISOCode = $_.currency_format.iso_code
+                                ExampleFormat = $_.currency_format.example_format
+                                DecimalDigits = $_.currency_format.decimal_digits
+                                DecimalSeparator = $_.currency_format.decimal_separator
+                                SymbolFirst = $_.currency_format.symbol_first
+                                GroupSeparator = $_.currency_format.group_separator
+                                CurrencySymbol = $_.currency_format.currency_symbol
+                                DisplaySymbol = $_.currency_format.display_symbol
                             }
                         }
                     }
@@ -81,19 +81,19 @@ function Get-YNABBudget {
                         [PSCustomObject]@{
                             BudgetID = $budget.id
                             Name = $budget.name
-                            'Last Modified' = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
-                            'First Month' = [datetime]::ParseExact($budget.first_month,'yyyy-MM-dd',$null)
-                            'Last Month' = [datetime]::ParseExact($budget.last_month,'yyyy-MM-dd',$null)
-                            'Date Format' = $budget.date_format.format
-                            'Currency Format' = [PSCustomObject]@{
-                                'ISO Code' = $budget.currency_format.iso_code
-                                'Example Format' = $budget.currency_format.example_format
-                                'Decimal Digits' = $budget.currency_format.decimal_digits
-                                'Decimal Separator' = $budget.currency_format.decimal_separator
-                                'Symbol First' = $budget.currency_format.symbol_first
-                                'Group Separator' = $budget.currency_format.group_separator
-                                'Currency Symbol' = $budget.currency_format.currency_symbol
-                                'Display Symbol' = $budget.currency_format.display_symbol
+                            LastModified = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
+                            FirstMonth = [datetime]::ParseExact($budget.first_month,'yyyy-MM-dd',$null)
+                            LastMonth = [datetime]::ParseExact($budget.last_month,'yyyy-MM-dd',$null)
+                            DateFormat = $budget.date_format.format
+                            CurrencyFormat = [PSCustomObject]@{
+                                ISOCode = $budget.currency_format.iso_code
+                                ExampleFormat = $budget.currency_format.example_format
+                                DecimalDigits = $budget.currency_format.decimal_digits
+                                DecimalSeparator = $budget.currency_format.decimal_separator
+                                SymbolFirst = $budget.currency_format.symbol_first
+                                GroupSeparator = $budget.currency_format.group_separator
+                                CurrencySymbol = $budget.currency_format.currency_symbol
+                                DisplaySymbol = $budget.currency_format.display_symbol
                             }
                             Accounts = $accounts
                             Payees = $payees
