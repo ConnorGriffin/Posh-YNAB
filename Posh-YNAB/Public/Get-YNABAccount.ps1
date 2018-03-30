@@ -13,24 +13,24 @@ function Get-YNABAccount {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='List:BudgetID')]
+    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,AccountID')]
-        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
         [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,AccountID')]
-        [Parameter(ParameterSetName='List:BudgetID')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
         [String]$BudgetID,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,AccountName')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
         [String[]]$AccountName,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,AccountID')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,AccountID')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
         [String[]]$AccountID,
 
         [Parameter(Mandatory=$true)]

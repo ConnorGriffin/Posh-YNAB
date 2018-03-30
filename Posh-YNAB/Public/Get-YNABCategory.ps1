@@ -13,24 +13,24 @@ function Get-YNABCategory {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='List:BudgetID')]
+    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,CategoryName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetName,CategoryID')]
-        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
         [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,CategoryName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='DetailByBudgetID,CategoryID')]
-        [Parameter(ParameterSetName='List:BudgetID')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
         [String]$BudgetID,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,CategoryName')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,CategoryName')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryName')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryName')]
         [String[]]$CategoryName,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetName,CategoryID')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='DetailByBudgetID,CategoryID')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryID')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryID')]
         [String[]]$CategoryID,
 
         [Parameter(Mandatory=$true)]

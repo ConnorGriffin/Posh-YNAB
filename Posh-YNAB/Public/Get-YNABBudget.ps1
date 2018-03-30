@@ -15,10 +15,10 @@ function Get-YNABBudget {
     #>
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='DetailByName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName')]
         [String[]]$BudgetName,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='DetailByID')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID')]
         [String[]]$BudgetID,
 
         [Parameter(Mandatory=$true)]

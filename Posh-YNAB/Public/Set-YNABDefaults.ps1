@@ -15,10 +15,10 @@ function Set-YNABDefaults {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByName')]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetName')]
         [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByID')]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetID')]
         [String]$BudgetID,
 
         [String]$Token
