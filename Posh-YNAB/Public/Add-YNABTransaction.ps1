@@ -33,8 +33,9 @@ function Add-YNABTransaction {
 
         [Datetime]$Date = (Get-Date),
 
+        # TODO: Add an inflow/outflow instead
         [Parameter(Mandatory=$true)]
-        [Single]$Amount,
+        [Double]$Amount,
 
         #[Parameter(Mandatory=$true)]
         [String]$PayeeName,
