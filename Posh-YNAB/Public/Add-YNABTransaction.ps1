@@ -34,7 +34,7 @@ function Add-YNABTransaction {
         [Datetime]$Date = (Get-Date),
 
         [Parameter(Mandatory=$true)]
-        [Single]$Amount,
+        [Double]$Amount,
 
         #[Parameter(Mandatory=$true)]
         [String]$PayeeName,
