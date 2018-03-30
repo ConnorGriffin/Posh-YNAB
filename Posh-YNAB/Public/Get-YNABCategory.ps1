@@ -33,12 +33,12 @@ function Get-YNABCategory {
         [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryID')]
         [String[]]$CategoryID,
 
-        [Parameter(Mandatory=$true)]
-        [String]$Token,
-
         [Parameter(ParameterSetName='List:BudgetName')]
         [Parameter(ParameterSetName='List:BudgetID')]
-        [Switch]$List
+        [Switch]$List,
+
+        [Parameter(Mandatory=$true)]
+        [String]$Token
     )
 
     begin {

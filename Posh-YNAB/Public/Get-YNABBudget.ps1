@@ -21,11 +21,11 @@ function Get-YNABBudget {
         [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID')]
         [String[]]$BudgetID,
 
-        [Parameter(Mandatory=$true)]
-        [String]$Token,
-
         [Parameter(ParameterSetName='List')]
-        [Switch]$List
+        [Switch]$List,
+
+        [Parameter(Mandatory=$true)]
+        [String]$Token
     )
 
     begin {
