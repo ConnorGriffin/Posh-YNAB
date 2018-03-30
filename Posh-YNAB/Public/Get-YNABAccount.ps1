@@ -37,6 +37,10 @@ function Get-YNABAccount {
         [Parameter(ParameterSetName='List:BudgetID')]
         [Switch]$List,
 
+        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(ParameterSetName='List:BudgetID')]
+        [Switch]$IncludeClosed,
+
         [Parameter(Mandatory=$true)]
         [String]$Token
     )
@@ -70,7 +74,12 @@ function Get-YNABAccount {
             'List*' {
                 $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts" -Headers $header
                 if ($response) {
-                    Get-ParsedAccountJson $response.data.accounts
+                    # By default only include open accounts, return closed accounts if -IncludeClosed is specified
+                    $data = $response.data.accounts.Where{
+                        if (!$IncludeClosed) {$_.closed -ne $true}
+                        else {$_}
+                    }
+                    Get-ParsedAccountJson $data
                 }
             }
             'Detail*' {
