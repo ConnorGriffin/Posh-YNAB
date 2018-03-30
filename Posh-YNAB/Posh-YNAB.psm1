@@ -28,7 +28,7 @@ function Set-FunctionDefaults {
             if ($Defaults) {
                 $default = $Defaults.GetEnumerator().Where{$_.Name -eq $paramName}.Value
                 if ($default) {
-                    $PSDefaultParameterValues["$($File.BaseName):$paramName"] = $default
+                    $global:PSDefaultParameterValues["$($File.BaseName):$paramName"] = $default
                 }
             }
         }

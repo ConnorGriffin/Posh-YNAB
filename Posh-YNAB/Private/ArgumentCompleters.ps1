@@ -8,7 +8,7 @@ $budgetName = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($PSDefaultParameterValues["${commandName}:Token"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
         }
 
@@ -42,7 +42,7 @@ $budgetId = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($PSDefaultParameterValues["${commandName}:Token"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
         }
 
@@ -76,7 +76,7 @@ $accountName = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($PSDefaultParameterValues["${commandName}:Token"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
         }
 
@@ -84,7 +84,7 @@ $accountName = @{
         if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
             $budgetName = $fakeBoundParameter.BudgetName
             $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($PSDefaultParameterValues["${commandName}:BudgetName"] -or $PSDefaultParameterValues["${commandName}:BudgetID"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
             $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
             $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
         }
@@ -126,7 +126,7 @@ $accountId = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($PSDefaultParameterValues["${commandName}:Token"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
         }
 
@@ -134,7 +134,7 @@ $accountId = @{
         if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
             $budgetName = $fakeBoundParameter.BudgetName
             $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($PSDefaultParameterValues["${commandName}:BudgetName"] -or $PSDefaultParameterValues["${commandName}:BudgetID"]) {
+        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
             $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
             $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
         }
