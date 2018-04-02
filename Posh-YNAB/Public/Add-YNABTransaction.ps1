@@ -15,32 +15,30 @@ function Add-YNABTransaction {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='BudgetName,AccountName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='BudgetName,AccountID')]
+
         [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='BudgetID,AccountName')]
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true,ParameterSetName='BudgetID,AccountID')]
+
         [String]$BudgetID,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='BudgetName,AccountName')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='BudgetID,AccountName')]
+
         [String]$AccountName,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='BudgetName,AccountID')]
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='BudgetID,AccountID')]
         [String]$AccountID,
 
         [Datetime]$Date = (Get-Date),
 
-        # TODO: Add an inflow/outflow instead
-        [Parameter(Mandatory=$true)]
         [Double]$Amount,
 
-        #[Parameter(Mandatory=$true)]
+        [Double]$Outflow,
+
+        [Double]$Inflow,
+
         [String]$PayeeName,
 
         #[Parameter(Mandatory=$true)]
+        # Remove PayeeID, need to just use Payee, autocomplete for PayeeName, idk?
+        # Maybe use aliases. Apply for all *ID and *Name parameters
         [String]$PayeeID,
 
         #[Parameter(Mandatory=$true)]
