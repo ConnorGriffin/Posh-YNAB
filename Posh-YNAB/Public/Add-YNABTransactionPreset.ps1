@@ -1,4 +1,4 @@
-function Add-YNABTransaction {
+function Add-YNABTransactionPreset {
     <#
     .SYNOPSIS
     Describe the function here
@@ -15,8 +15,7 @@ function Add-YNABTransaction {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Preset')]
-        [Alias('Preset')]
+        [Parameter(Mandatory=$true,Position=0)]
         [String]$PresetName,
 
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:Name')]
@@ -81,12 +80,7 @@ function Add-YNABTransaction {
         [Parameter(Position=70)]
         [Datetime]$Date = (Get-Date),
 
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Outflow:Name')]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Outflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=80)]
         $Token,
 
         [Parameter(Position=90)]
@@ -97,83 +91,37 @@ function Add-YNABTransaction {
         [Switch]$Cleared,
 
         [Parameter(Position=110)]
-        [Bool]$Approved=$true,
-
-        [Parameter(Position=120)]
-        [String]$StoreAs
+        [Bool]$Approved=$true
     )
 
     begin {
-        Write-Verbose "Add-YNABTransaction.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "New-YNABTransactionPreset.ParameterSetName: $($PsCmdlet.ParameterSetName)"
 
-        # Set the default header value for Invoke-RestMethod
-        if ($Token) {$header = Get-Header $Token}
+        # Encrypt the token if it is of type String, replace $PSBoundParameters.Token with the SecureString version
+        $data = $PSBoundParameters
+        if ($Token.GetType().Name -eq 'String') {
+            $data.Token = $Token | ConvertTo-SecureString -AsPlainText -Force
+        }
 
-        # Set Amount if Outflow or Inflow is provided
-        if ($Outflow) {
-            $Amount = -$Outflow
-        } elseif ($Inflow) {
-            $Amount = $Inflow
+        # Import the preset file if one exists
+        $presetFile = "$profilePath\Presets.xml"
+        if (Test-Path $presetFile) {
+            $presets = Import-Clixml $presetFile
+        } else {
+            $presets = @{}
         }
     }
 
     process {
-        # Get the budget IDs if the budget was specified by name
-        if ($BudgetName) {
-            $budgets = Get-YNABBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
-            Write-Verbose "Using budget: $BudgetID"
-        }
+        # Get the preset name and then remove it from the parameters array
+        $name = $data.PresetName
+        [Void]$data.Remove('PresetName')
 
-        # Get the account ID if the account was specified by name
-        if ($AccountName) {
-            $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
-            $AccountID = $accounts.Where{$_.Account -like $AccountName}.AccountID
-            Write-Verbose "Using account: $AccountID"
-        }
+        # Remove the preset from the hashtable (does nothing if it does not exist)
+        $presets.Remove($name)
 
-        # Get the category ID if the category was specified by name
-        if ($CategoryName) {
-            $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
-            $CategoryID = $categories.Where{$_.Category -like $CategoryName}.CategoryID
-            Write-Verbose "Using category: $CategoryID"
-        }
-
-        # Load presets and perform a recursive run if a $Preset is specified
-        if ($PresetName) {
-            Write-Verbose "Using preset: $PresetName"
-            $presetParams = (Get-YNABTransactionPreset $PresetName).Value
-            Add-YNABTransaction @presetParams
-        } else {
-            # Setup the POST body
-            $body = @{
-                transaction = @{
-                    account_id = $AccountID
-                    date = $Date.ToString('yyyy-MM-dd')
-                    amount = $Amount * 1000
-                    category_id = $CategoryID
-                    approved = $Approved
-                }
-            }
-
-            # Add the optionbal parameters
-            if ($PayeeID) {$body.transaction.payee_id = $PayeeID}
-            elseif ($PayeeName) {$body.transaction.payee_name = $PayeeName}
-
-            if ($Memo) {$body.transaction.memo = $Memo}
-            if ($Cleared) {$body.transaction.cleared = 'cleared'}
-            if ($FlagColor) {$body.transaction.flag_color = $FlagColor.ToLower()}
-
-            $response = Invoke-RestMethod "$uri/budgets/$BudgetID/transactions" -Headers $header -Body ($body | ConvertTo-Json) -Method 'POST'
-            if ($response) {
-                Get-ParsedTransactionJson $response.data.transaction
-            }
-
-            if ($StoreAs) {
-                $params = $PSBoundParameters
-                [Void]$params.Remove('StoreAs')
-                Add-YNABTransactionPreset -PresetName $StoreAs @params
-            }
-        }
+        # Add the preset data to the presets hashtable, then export to $presetFile
+        $presets += @{$name = $data}
+        $presets | Export-Clixml $presetFile
     }
 }
