@@ -13,46 +13,82 @@ function Get-YNABAccount {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='List')]
+    [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
-        [String]$Token,
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
+        [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,Mandatory=$true)]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
+        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
         [String]$BudgetID,
 
-        [Parameter(ValueFromPipelineByPropertyName,ParameterSetName='Detail')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
+        [String[]]$AccountName,
+
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
+        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
         [String[]]$AccountID,
 
-        [Parameter(ParameterSetName='List')]
-        [Switch]$ListAll
+        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(ParameterSetName='List:BudgetID')]
+        [Switch]$List,
+
+        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(ParameterSetName='List:BudgetID')]
+        [Switch]$IncludeClosed,
+
+        [Parameter(Mandatory=$true)]
+        $Token
     )
 
     begin {
+        Write-Verbose "Get-YNABAccount.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+
         # Set the default header value for Invoke-RestMethod
-        $header =  Get-Header $Token
+        $header = Get-Header $Token
     }
 
     process {
-        switch ($PsCmdlet.ParameterSetName) {
-            'List' {
-                # Return a list of accounts in each budget
-                $BudgetID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$_/accounts" -Headers $header
-                    if ($response) {
-                        Get-ParsedAccountJson $response.data.accounts
+        # Get the budget IDs if the budget was specified by name
+        if ($BudgetName) {
+            Write-Verbose "Performing budget lookup to get BudgetID for $BudgetName"
+            $budgets = Get-YNABBudget -List -Token $Token
+            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
+            Write-Verbose "Using BudgetID: $BudgetID"
+        }
+
+        # Get the account ID if the account was specified by name
+        if ($AccountName) {
+            $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
+            $AccountID = $AccountName.ForEach{
+                $name = $_
+                $accounts.Where{$_.Account -like $name}.AccountID
+            }
+            Write-Verbose "Using AccountID: $($AccountID -join ', ')"
+        }
+
+        switch -Wildcard ($PsCmdlet.ParameterSetName) {
+            'List*' {
+                $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts" -Headers $header
+                if ($response) {
+                    # By default only include open accounts, return closed accounts if -IncludeClosed is specified
+                    $data = $response.data.accounts.Where{
+                        if (!$IncludeClosed) {$_.closed -ne $true}
+                        else {$_}
                     }
+                    Get-ParsedAccountJson $data
                 }
             }
-            'Detail' {
+            'Detail*' {
                 # Return account details for each AccountID specified
-                $BudgetID.ForEach{
-                    $budget = $_
-                    $AccountID.ForEach{
-                        $response = Invoke-RestMethod "$uri/budgets/$budget/accounts/$_" -Headers $header
-                        if ($response) {
-                            Get-ParsedAccountJson $response.data.account
-                        }
+                $AccountID.ForEach{
+                    $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts/$_" -Headers $header
+                    if ($response) {
+                        Get-ParsedAccountJson $response.data.account
                     }
                 }
             }

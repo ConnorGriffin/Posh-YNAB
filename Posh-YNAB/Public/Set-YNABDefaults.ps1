@@ -13,40 +13,34 @@ function Set-YNABDefaults {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='ByName')]
+    [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByName')]
-        [String$BudgetName,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetName')]
+        [String]$BudgetName,
 
-        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='ByID')]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetID')]
         [String]$BudgetID,
 
-        [String]$Token
+        $Token
     )
 
-    begin {}
+    begin {
+        Write-Verbose "Set-YNABDefaults.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+
+        # Encrypt the token if it is of type String
+        if ($Token.GetType().Name -eq 'String') {
+            $Token = $Token | ConvertTo-SecureString -AsPlainText -Force
+        }
+
+        $data = $PSBoundParameters
+        $data.Token = $Token
+    }
 
     process {
-        # Set module parameter defaults. This is also done on module import once this command has been run once.
-        if ($BudgetName) {
-            $budgetFunctions.ForEach{
-                $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetName
-            }
-        }
-
-        if ($BudgetID) {
-            $budgetFunctions.ForEach{
-                $global:PSDefaultParameterValues["${_}:BudgetID"] = $BudgetID
-            }
-        }
-
-        if ($Token) {
-            $tokenFunctions.ForEach{
-                $global:PSDefaultParameterValues["${_}:Token"] = $Token
-            }
-        }
-
         # Export the provided parameters for the module import to read them later
-        $MyInvocation.BoundParameters | Export-Clixml "$profilePath\Defaults.xml"
+        $data | Export-Clixml "$profilePath\Defaults.xml"
+
+        # Re-import the module to reload the defaults
+        Import-Module "$moduleRoot\$moduleName.psm1" -Global -Force
     }
 }
