@@ -38,7 +38,7 @@ function Get-YNABBudget {
         # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
         if ($BudgetName) {
             $budgets = Get-YNABBudget -Token $Token -List
-            $budgetId = $budgets.Where{$_.Name -eq $BudgetName}.BudgetID
+            $budgetId = $budgets.Where{$_.Budget -eq $BudgetName}.BudgetID
         }
 
         switch -Wildcard ($PsCmdlet.ParameterSetName) {
@@ -49,8 +49,7 @@ function Get-YNABBudget {
                     $budgets = $response.data.budgets
                     $budgets.ForEach{
                         [PSCustomObject]@{
-                            BudgetID = $_.id
-                            Name = $_.name
+                            Budget = $_.name
                             LastModified = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
                             FirstMonth = [datetime]::ParseExact($_.first_month,'yyyy-MM-dd',$null)
                             LastMonth = [datetime]::ParseExact($_.last_month,'yyyy-MM-dd',$null)
@@ -65,6 +64,7 @@ function Get-YNABBudget {
                                 CurrencySymbol = $_.currency_format.currency_symbol
                                 DisplaySymbol = $_.currency_format.display_symbol
                             }
+                            BudgetID = $_.id
                         }
                     }
                 }
@@ -79,8 +79,7 @@ function Get-YNABBudget {
                         $payees = Get-ParsedPayeeJson $budget.payees $budget.payee_locations
                         $transactions = Get-ParsedTransactionJson $budget.transactions $budget.subtransactions -ParsedPayee $payees
                         [PSCustomObject]@{
-                            BudgetID = $budget.id
-                            Name = $budget.name
+                            Budget = $budget.budget
                             LastModified = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
                             FirstMonth = [datetime]::ParseExact($budget.first_month,'yyyy-MM-dd',$null)
                             LastMonth = [datetime]::ParseExact($budget.last_month,'yyyy-MM-dd',$null)
@@ -98,6 +97,7 @@ function Get-YNABBudget {
                             Accounts = $accounts
                             Payees = $payees
                             Transactions = $transactions
+                            BudgetID = $budget.id
                             <# TODO: Implement:
                             Categories =
                             'Category Groups' =

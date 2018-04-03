@@ -55,7 +55,7 @@ function Get-YNABCategory {
         # Get the budget IDs if the budget was specified by name
         if ($BudgetName) {
             $budgets = Get-YNABBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Name -like $BudgetName}.BudgetID
+            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
         }
 
         # Get the account ID if the account was specified by name

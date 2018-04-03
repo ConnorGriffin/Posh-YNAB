@@ -21,12 +21,12 @@ $budgetName = @{
             $wordMatch = $wordToComplete.Trim("`"`'")
 
             # Add a CompletionResult for each budget name matching wordToComplete
-            $budgets.Where{$_.Name -like "*$wordMatch*"}.ForEach{
+            $budgets.Where{$_.Budget -like "*$wordMatch*"}.ForEach{
                 New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Name)`"",
-                    $_.Name,
+                    "`"$($_.Budget)`"",
+                    $_.Budget,
                     'ParameterValue',
-                    $_.Name
+                    $_.Budget
                 )
             }
         }
@@ -105,12 +105,12 @@ $accountName = @{
             $wordMatch = $wordToComplete.Trim("`"`'")
 
             # Add a CompletionResult for each budget name matching wordToComplete
-            $accounts.Where{$_.Name -like "*$wordMatch*"}.ForEach{
+            $accounts.Where{$_.Account -like "*$wordMatch*"}.ForEach{
                 New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Name)`"",
-                    $_.Name,
+                    "`"$($_.Account)`"",
+                    $_.Account,
                     'ParameterValue',
-                    $_.Name
+                    $_.Account
                 )
             }
         }

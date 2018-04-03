@@ -26,8 +26,7 @@ function Get-ParsedAccountJson {
     process {
         $Account.ForEach{
             [PSCustomObject]@{
-                AccountID = $_.id
-                Name = $_.name
+                Account = $_.name
                 Type = $_.type
                 OnBudget = $_.on_budget
                 Closed = $_.closed
@@ -35,6 +34,7 @@ function Get-ParsedAccountJson {
                 Balance = ([double]$_.balance / 1000)
                 ClearedBalance = ([double]$_.cleared_balance / 1000)
                 UnclearedBalance = ([double]$_.uncleared_balance / 1000)
+                AccountID = $_.id
             }
         }
     }
@@ -81,10 +81,10 @@ function Get-ParsedPayeeJson {
 
             # Return the formatted payee data
             [PSCustomObject]@{
-                PayeeID = $payeeId
-                Name = $_.name
+                Payee = $_.name
                 TransferAccountID = $_.transfer_account_id
                 Location = $location
+                PayeeID = $payeeId
             }
         }
     }
@@ -166,9 +166,9 @@ function Get-ParsedTransactionJson {
                         #account
                         Payee = $payee.Name
                         #Category
+                        Subtransactions = $subtrans
                         PayeeID = $payee.PayeeId
                         #CategoryID
-                        Subtransactions = $subtrans
                     }
                 }
             }
@@ -199,10 +199,10 @@ function Get-ParsedTransactionJson {
                         Payee = $_.payee_name
                         Category = $_.category_name
                         Account = $_.account_name
+                        Subtransactions = $subtrans
                         PayeeID = $_.payee_id
                         CategoryID = $_.category_id
                         AccountID = $_.account_id
-                        Subtransactions = $subtrans
                     }
                 }
             }

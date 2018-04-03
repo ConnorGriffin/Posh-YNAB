@@ -56,7 +56,7 @@ function Get-YNABAccount {
         if ($BudgetName) {
             Write-Verbose "Performing budget lookup to get BudgetID for $BudgetName"
             $budgets = Get-YNABBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Name -like $BudgetName}.BudgetID
+            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
             Write-Verbose "Using BudgetID: $BudgetID"
         }
 
@@ -65,7 +65,7 @@ function Get-YNABAccount {
             $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
             $AccountID = $AccountName.ForEach{
                 $name = $_
-                $accounts.Where{$_.Name -like $name}.AccountID
+                $accounts.Where{$_.Account -like $name}.AccountID
             }
             Write-Verbose "Using AccountID: $($AccountID -join ', ')"
         }
