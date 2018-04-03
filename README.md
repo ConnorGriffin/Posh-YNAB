@@ -52,7 +52,7 @@ Each budget contains one or more months, which is where To be Budgeted, Age of M
 ### Transactions
 The Transactions for a budget.
 - [GET] /budgets/{budget_id}/transactions  
-- **[POST] /budgets/{budget_id}/transactions**
+- ~~**[POST] /budgets/{budget_id}/transactions**~~
 - [POST] /budgets/{budget_id}/transactions/bulk
 - [GET] /budgets/{budget_id}/accounts/{account_id}/transactions
 - [GET] /budgets/{budget_id}/categories/{category_id}/transactions
