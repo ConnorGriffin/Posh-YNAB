@@ -267,6 +267,29 @@ $categoryId = @{
     }
 }
 
+$presetName = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'PresetName'}.Function
+    Parameter = 'PresetName'
+    ScriptBlock = {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+        # Get a list of all accounts
+        $presets = (Get-YNABTransactionPreset -List).GetEnumerator() | Sort Name
+
+        # Trim quotes from the $wordToComplete
+        $wordMatch = $wordToComplete.Trim("`"`'")
+
+        # Add a CompletionResult for each budget name matching wordToComplete
+        $presets.Where{$_.Name -like "*$wordMatch*"}.ForEach{
+            New-Object System.Management.Automation.CompletionResult (
+                "`"$($_.Name)`"",
+                $_.Name,
+                'ParameterValue',
+                $_.Name
+            )
+        }
+    }
+}
+
 # Register the Argument Completers
 Register-ArgumentCompleter @budgetName
 Register-ArgumentCompleter @budgetId
@@ -274,3 +297,4 @@ Register-ArgumentCompleter @accountName
 Register-ArgumentCompleter @accountId
 Register-ArgumentCompleter @categoryName
 Register-ArgumentCompleter @categoryId
+Register-ArgumentCompleter @presetName
