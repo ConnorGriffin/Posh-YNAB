@@ -13,68 +13,57 @@ function Add-YNABTransactionPreset {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='Outflow')]
     param(
         [Parameter(Mandatory=$true,Position=0)]
         [String]$PresetName,
 
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:Name')]
+        [Parameter(Position=10,ParameterSetName='Amount')]
+        [Parameter(Position=10,ParameterSetName='Inflow')]
+        [Parameter(Position=10,ParameterSetName='Outflow')]
         [Alias('Budget')]
         [String]$BudgetName,
 
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:ID',DontShow)]
+        [Parameter(Position=10,DontShow)]
         [String]$BudgetID,
 
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:Name')]
+        [Parameter(Position=20,ParameterSetName='Amount')]
+        [Parameter(Position=20,ParameterSetName='Inflow')]
+        [Parameter(Position=20,ParameterSetName='Outflow')]
         [Alias('Account')]
         [String]$AccountName,
 
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:ID',DontShow)]
+        [Parameter(Position=20,DontShow)]
         [String]$AccountID,
 
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:Name')]
+        [Parameter(Position=30,ParameterSetName='Amount')]
+        [Parameter(Position=30,ParameterSetName='Inflow')]
+        [Parameter(Position=30,ParameterSetName='Outflow')]
         [Alias('Payee')]
         [String]$PayeeName,
 
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:ID',DontShow)]
+        [Parameter(Position=30,DontShow)]
         [String]$PayeeID,
 
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Outflow:Name')]
+        [Parameter(Position=40,ParameterSetName='Amount')]
+        [Parameter(Position=40,ParameterSetName='Inflow')]
+        [Parameter(Position=40,ParameterSetName='Outflow')]
         [Alias('Category')]
         [String]$CategoryName,
 
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Outflow:ID',DontShow)]
+        [Parameter(Position=40,DontShow)]
         [String]$CategoryID,
 
         [Parameter(Position=50)]
         [String]$Memo,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow:Name')]
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow:ID')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow')]
         [Double]$Outflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow:ID')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow')]
         [Double]$Inflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount:ID')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount')]
         [Double]$Amount,
 
         [Parameter(Position=70)]

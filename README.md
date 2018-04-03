@@ -5,6 +5,7 @@
 
 * Implement functionality for all API endpoints
 * ~~Add AccountName and BudgetName parameters to Get-YNABAccount and Set-YNABDefaults~~
+* ~~Add transaction presets~~
 * BudgetName is set to be accepted from pipeline, but nothing outputs it, so... gotta work on that
 * Build ArgumentCompleters for all applicable parameters
 * Add comment-based help for all functions
