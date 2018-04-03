@@ -195,7 +195,7 @@ function Get-ParsedTransactionJson {
                         Memo = $_.memo
                         Cleared = $_.cleared
                         Approved = $_.approved
-                        FlagColor = $_.flag_color
+                        FlagColor = (Get-Culture).TextInfo.ToTitleCase($_.flag_color)
                         Payee = $_.payee_name
                         Category = $_.category_name
                         Account = $_.account_name
