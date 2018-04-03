@@ -29,8 +29,8 @@ The Accounts for a budget.
 
 ### Categories
 The Categories for a budget.
-- [GET] /budgets/{budget_id}/categories
-- [GET] /budgets/{budget_id}/categories/{category_id}
+- ~~[GET] /budgets/{budget_id}/categories~~
+- ~~[GET] /budgets/{budget_id}/categories/{category_id}~~
 
 ### Payees
 The Payees for a budget.

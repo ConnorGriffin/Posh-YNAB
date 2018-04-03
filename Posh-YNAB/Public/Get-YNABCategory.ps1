@@ -37,6 +37,10 @@ function Get-YNABCategory {
         [Parameter(ParameterSetName='List:BudgetID')]
         [Switch]$List,
 
+        [Parameter(ParameterSetName='List:BudgetName')]
+        [Parameter(ParameterSetName='List:BudgetID')]
+        [Switch]$IncludeHidden,
+
         [Parameter(Mandatory=$true)]
         [String]$Token
     )
@@ -59,7 +63,7 @@ function Get-YNABCategory {
             $categories = Get-YNABCategory -List -BudgetID $BudgetID -Token $Token
             $CategoryID = $CategoryName.ForEach{
                 $name = $_
-                $categories.Where{$_.Name -like $name}.CategoryID
+                $categories.Categories.Where{$_.Category -like $name}.CategoryID
             }
         }
 
@@ -67,7 +71,7 @@ function Get-YNABCategory {
             'List*' {
                 $response = Invoke-RestMethod "$uri/budgets/$BudgetID/categories" -Headers $header
                 if ($response) {
-                    Get-ParsedCategoryJson $response.data.category_groups.categories
+                    Get-ParsedCategoryJson $response.data.category_groups -List -IncludeHidden:$IncludeHidden
                 }
             }
             'Detail*' {

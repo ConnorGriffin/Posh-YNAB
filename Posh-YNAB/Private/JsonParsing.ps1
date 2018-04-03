@@ -228,19 +228,63 @@ function Get-ParsedCategoryJson {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true,ValueFromPipeline)]
-        [Object[]]$Category
+        [Object[]]$Category,
+        [Switch]$List,
+        [Switch]$IncludeHidden
     )
 
     begin {}
 
     process {
-        $Category.ForEach{
-            $categoryId = $_.id
+        if ($List) {
+            $Category.Where{
+                # Get rid of hidden category groups unless $IncludeHidden is $true
+                if (!$IncludeHidden) {
+                    $_.hidden -ne $true -and $_.name -ne 'Internal Master Category'
+                } else {
+                    $_.name -ne 'Internal Master Category'
+                }
+            }.ForEach{
+                # Build an object of subcategories for each group
+                $categories = $_.categories.Where{
+                    # Get rid of hidden categories unless $IncludeHidden is $true
+                    if (!$IncludeHidden) {
+                        $_.hidden -ne $true
+                    } else {$true}
+                }.ForEach{
+                    [PSCustomObject]@{
+                        Category = $_.name
+                        Note = $_.note
+                        Budgeted = ([double]$_.budgeted / 1000)
+                        Activity = ([double]$_.activity / 1000)
+                        Balance = ([double]$_.balance / 1000)
+                        Hidden = $_.hidden
+                        CategoryID = $_.id
+                    }
+                }
 
-            # Return the formatted data
-            [PSCustomObject]@{
-                CategoryID = $categoryId
-                Name = $_.name
+                # Don't return the category group if there aren't any categories
+                if ($categories) {
+                    [PSCustomObject]@{
+                        CategoryGroup = $_.name
+                        Hidden = $_.hidden
+                        Categories = $categories
+                        CategoryGroupID = $_.id
+                    }
+                }
+            }
+        } else {
+            $Category.ForEach{
+                # Return the formatted data
+                [PSCustomObject]@{
+                    Category = $_.name
+                    Note = $_.note
+                    Budgeted = ([double]$_.budgeted / 1000)
+                    Activity = ([double]$_.activity / 1000)
+                    Balance = ([double]$_.balance / 1000)
+                    Hidden = $_.hidden
+                    CategoryID = $_.id
+                }
             }
         }
     }
