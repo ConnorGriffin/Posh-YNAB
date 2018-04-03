@@ -15,107 +15,115 @@ function Add-YNABTransaction {
     #>
     [CmdletBinding()]
     param(
-
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Outflow:Name')]
-        [Alias('Budget')]
-        [String]$BudgetName,
-
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Amount:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Inflow:ID',DontShow)]
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Outflow:ID',DontShow)]
-        [String]$BudgetID,
+        [Parameter(Position=0)]
+        [String]$Preset,
 
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:Name')]
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:Name')]
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:Name')]
-        [Alias('Account')]
-        [String]$AccountName,
+        [Alias('Budget')]
+        [String]$BudgetName,
 
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:ID',DontShow)]
-        [String]$AccountID,
+        [String]$BudgetID,
 
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:Name')]
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:Name')]
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:Name')]
-        [Alias('Payee')]
-        [String]$PayeeName,
+        [Alias('Account')]
+        [String]$AccountName,
 
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:ID',DontShow)]
-        [String]$PayeeID,
+        [String]$AccountID,
 
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:Name')]
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:Name')]
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:Name')]
-        [Alias('Category')]
-        [String]$CategoryName,
+        [Alias('Payee')]
+        [String]$PayeeName,
 
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:ID',DontShow)]
         [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:ID',DontShow)]
+        [String]$PayeeID,
+
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Outflow:Name')]
+        [Alias('Category')]
+        [String]$CategoryName,
+
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Amount:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Inflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=40,ParameterSetName='Outflow:ID',DontShow)]
         [String]$CategoryID,
 
-        [Parameter(Position=40)]
+        [Parameter(Position=50)]
         [String]$Memo,
 
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Amount:Name')]
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Amount:ID')]
-        [Double]$Amount,
-
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Outflow:Name')]
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Outflow:ID')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow:Name')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow:ID')]
         [Double]$Outflow,
 
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Inflow:Name')]
-        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Inflow:ID')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow:ID')]
         [Double]$Inflow,
 
-        [Parameter(Position=60)]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount:ID')]
+        [Double]$Amount,
+
+        [Parameter(Position=70)]
         [Datetime]$Date = (Get-Date),
 
-        [Parameter(Mandatory=$true,Position=70)]
-        [String]$Token,
+        [Parameter(Mandatory=$true,Position=80)]
+        $Token,
 
-        [Parameter(Position=80)]
+        [Parameter(Position=90)]
         [ValidateSet('Red','Orange','Yellow','Green','Blue','Purple')]
         [String]$FlagColor,
 
-        [Parameter(Position=90)]
+        [Parameter(Position=100)]
         [Switch]$Cleared,
 
-        [Parameter(Position=100)]
-        [Bool]$Approved=$true
+        [Parameter(Position=110)]
+        [Bool]$Approved=$true,
+
+        [Parameter(Position=120)]
+        [String]$StoreAs
     )
 
     begin {
+        Write-Verbose "Add-YNABTransaction.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        
         # Set the default header value for Invoke-RestMethod
-        $header = Get-Header $Token`
-        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
-        Write-Verbose $Date
+        $header = Get-Header $Token
     }
 
     process {
         # Get the budget IDs if the budget was specified by name
         if ($BudgetName) {
             $budgets = Get-YNABBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Name -like $BudgetName}.BudgetID
+            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
+            Write-Verbose "Using budget: $BudgetID"
         }
 
         # Get the account ID if the account was specified by name
         if ($AccountName) {
             $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
-            $AccountID = $accounts.Where{$_.Name -like $AccountName}.AccountID
+            $AccountID = $accounts.Where{$_.Account -like $AccountName}.AccountID
+            Write-Verbose "Using account: $AccountID"
         }
 
         # Get the category ID if the category was specified by name
         if ($CategoryName) {
-            $categories = Get-YNABCategory -List -BudgetID $BudgetID -Token $Token
-            $CategoryID = $categories.Where{$_.Name -like $CategoryName}.CategoryID
+            $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
+            $CategoryID = $categories.Where{$_.Category -like $CategoryName}.CategoryID
+            Write-Verbose "Using category: $CategoryID"
         }
 
         # Setup the POST body

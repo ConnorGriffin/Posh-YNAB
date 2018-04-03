@@ -16,7 +16,7 @@ function Get-YNABUser {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [String]$Token
+        $Token
     )
 
     begin {

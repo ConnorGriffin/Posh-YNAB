@@ -21,16 +21,24 @@ function Set-YNABDefaults {
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetID')]
         [String]$BudgetID,
 
-        [String]$Token
+        $Token
     )
 
     begin {
-        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Set-YNABDefaults.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+
+        # Encrypt the token if it is of type String
+        if ($Token.GetType().Name -eq 'String') {
+            $Token = $Token | ConvertTo-SecureString -AsPlainText -Force
+        }
+
+        $data = $PSBoundParameters
+        $data.Token = $Token
     }
 
     process {
         # Export the provided parameters for the module import to read them later
-        $MyInvocation.BoundParameters | Export-Clixml "$profilePath\Defaults.xml"
+        $data | Export-Clixml "$profilePath\Defaults.xml"
 
         # Re-import the module to reload the defaults
         Import-Module "$moduleRoot\$moduleName.psm1" -Global -Force

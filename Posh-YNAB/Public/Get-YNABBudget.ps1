@@ -25,13 +25,14 @@ function Get-YNABBudget {
         [Switch]$List,
 
         [Parameter(Mandatory=$true)]
-        [String]$Token
+        $Token
     )
 
     begin {
+        Write-Verbose "Get-YNABBudget.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        
         # Set the default header value for Invoke-RestMethod
-        $header =  Get-Header $Token
-        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        $header = Get-Header $Token
     }
 
     process {

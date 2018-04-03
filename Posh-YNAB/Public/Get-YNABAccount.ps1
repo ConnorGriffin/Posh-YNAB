@@ -42,13 +42,14 @@ function Get-YNABAccount {
         [Switch]$IncludeClosed,
 
         [Parameter(Mandatory=$true)]
-        [String]$Token
+        $Token
     )
 
     begin {
+        Write-Verbose "Get-YNABAccount.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+
         # Set the default header value for Invoke-RestMethod
-        $header = Get-Header $Token`
-        Write-Verbose "Get-YNABAccount ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        $header = Get-Header $Token
     }
 
     process {

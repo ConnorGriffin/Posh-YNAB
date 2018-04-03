@@ -42,13 +42,14 @@ function Get-YNABCategory {
         [Switch]$IncludeHidden,
 
         [Parameter(Mandatory=$true)]
-        [String]$Token
+        $Token
     )
 
     begin {
+        Write-Verbose "Get-YNABCategory.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        
         # Set the default header value for Invoke-RestMethod
-        $header = Get-Header $Token`
-        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        $header = Get-Header $Token
     }
 
     process {
@@ -60,10 +61,10 @@ function Get-YNABCategory {
 
         # Get the account ID if the account was specified by name
         if ($CategoryName) {
-            $categories = Get-YNABCategory -List -BudgetID $BudgetID -Token $Token
+            $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
             $CategoryID = $CategoryName.ForEach{
                 $name = $_
-                $categories.Categories.Where{$_.Category -like $name}.CategoryID
+                $categories.Where{$_.Category -like $name}.CategoryID
             }
         }
 
