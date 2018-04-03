@@ -16,48 +16,80 @@ function Add-YNABTransaction {
     [CmdletBinding()]
     param(
 
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Outflow:Name')]
+        [Alias('Budget')]
         [String]$BudgetName,
 
-
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Amount:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Inflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Outflow:ID',DontShow)]
         [String]$BudgetID,
 
-
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:Name')]
+        [Alias('Account')]
         [String]$AccountName,
 
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Amount:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Inflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=10,ParameterSetName='Outflow:ID',DontShow)]
         [String]$AccountID,
 
-        [Datetime]$Date = (Get-Date),
-
-        [Double]$Amount,
-
-        [Double]$Outflow,
-
-        [Double]$Inflow,
-
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:Name')]
+        [Alias('Payee')]
         [String]$PayeeName,
 
-        #[Parameter(Mandatory=$true)]
-        # Remove PayeeID, need to just use Payee, autocomplete for PayeeName, idk?
-        # Maybe use aliases. Apply for all *ID and *Name parameters
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Amount:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Inflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=20,ParameterSetName='Outflow:ID',DontShow)]
         [String]$PayeeID,
 
-        #[Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:Name')]
+        [Alias('Category')]
         [String]$CategoryName,
 
-        #[Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Amount:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Inflow:ID',DontShow)]
+        [Parameter(Mandatory=$true,Position=30,ParameterSetName='Outflow:ID',DontShow)]
         [String]$CategoryID,
 
+        [Parameter(Position=40)]
         [String]$Memo,
 
-        [Switch]$Cleared,
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Amount:Name')]
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Amount:ID')]
+        [Double]$Amount,
 
-        [Bool]$Approved=$true,
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Outflow:Name')]
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Outflow:ID')]
+        [Double]$Outflow,
 
-        # Validate list here
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Inflow:Name')]
+        [Parameter(Mandatory=$true,Position=50,ParameterSetName='Inflow:ID')]
+        [Double]$Inflow,
+
+        [Parameter(Position=60)]
+        [Datetime]$Date = (Get-Date),
+
+        [Parameter(Mandatory=$true,Position=70)]
+        [String]$Token,
+
+        [Parameter(Position=80)]
+        [ValidateSet('Red','Orange','Yellow','Green','Blue','Purple')]
         [String]$FlagColor,
 
-        [Parameter(Mandatory=$true)]
-        [String]$Token
+        [Parameter(Position=90)]
+        [Switch]$Cleared,
+
+        [Parameter(Position=100)]
+        [Bool]$Approved=$true
     )
 
     begin {
