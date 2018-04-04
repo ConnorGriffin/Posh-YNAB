@@ -15,40 +15,32 @@ function Add-YNABTransaction {
     #>
     [CmdletBinding(DefaultParameterSetName='Outflow')]
     param(
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='Preset')]
+        [Parameter(Position=0)]
         [Alias('Preset')]
         [String]$PresetName,
 
-        [Parameter(Position=10,ParameterSetName='Amount')]
-        [Parameter(Position=10,ParameterSetName='Inflow')]
-        [Parameter(Position=10,ParameterSetName='Outflow')]
+        [Parameter(Position=10)]
         [Alias('Budget')]
         [String]$BudgetName,
 
         [Parameter(Position=10,DontShow)]
         [String]$BudgetID,
 
-        [Parameter(Position=20,ParameterSetName='Amount')]
-        [Parameter(Position=20,ParameterSetName='Inflow')]
-        [Parameter(Position=20,ParameterSetName='Outflow')]
+        [Parameter(Position=20)]
         [Alias('Account')]
         [String]$AccountName,
 
         [Parameter(Position=20,DontShow)]
         [String]$AccountID,
 
-        [Parameter(Position=30,ParameterSetName='Amount')]
-        [Parameter(Position=30,ParameterSetName='Inflow')]
-        [Parameter(Position=30,ParameterSetName='Outflow')]
+        [Parameter(Position=30)]
         [Alias('Payee')]
         [String]$PayeeName,
 
         [Parameter(Position=30,DontShow)]
         [String]$PayeeID,
 
-        [Parameter(Position=40,ParameterSetName='Amount')]
-        [Parameter(Position=40,ParameterSetName='Inflow')]
-        [Parameter(Position=40,ParameterSetName='Outflow')]
+        [Parameter(Position=40)]
         [Alias('Category')]
         [String]$CategoryName,
 
@@ -70,9 +62,7 @@ function Add-YNABTransaction {
         [Parameter(Position=70)]
         [Datetime]$Date = (Get-Date),
 
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Amount')]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Inflow')]
-        [Parameter(Mandatory=$true,Position=80,ParameterSetName='Outflow')]
+        [Parameter(Position=80)]
         $Token,
 
         [Parameter(Position=90)]
@@ -108,6 +98,39 @@ function Add-YNABTransaction {
         if ($PresetName) {
             Write-Verbose "Using preset: $PresetName"
             $presetParams = (Get-YNABTransactionPreset $PresetName).Value
+
+            # Override preset data with values for any provided named parameters
+            if ($BudgetName) {$presetParams.BudgetName = $BudgetName}
+            if ($BudgetID) {$presetParams.BudgetID = $BudgetID}
+            if ($AccountName) {$presetParams.AccountName = $AccountName}
+            if ($AccountID) {$presetParams.AccountID = $AccountID}
+            if ($PayeeName) {$presetParams.PayeeName = $PayeeName}
+            if ($PayeeID) {$presetParams.PayeeID = $PayeeID}
+            if ($CategoryName) {$presetParams.CategoryName = $CategoryName}
+            if ($CategoryID) {$presetParams.CategoryID = $CategoryID}
+            if ($Memo) {$presetParams.Memo = $Memo}
+            if ($Outflow) {
+                $presetParams.Remove('Inflow')
+                $presetParams.Remove('Amount')
+                $presetParams.Outflow = $Outflow
+            }
+            if ($Inflow) {
+                $presetParams.Remove('Outflow')
+                $presetParams.Remove('Amount')
+                $presetParams.Inflow = $Inflow
+            }
+            if ($Amount) {
+                $presetParams.Remove('Inflow')
+                $presetParams.Remove('Outflow')
+                $presetParams.Amount = $Amount
+            }
+            if ($Date) {$presetParams.Date = $Date}
+            if ($Token) {$presetParams.Token = $Token}
+            if ($FlagColor) {$presetParams.FlagColor = $FlagColor}
+            if ($Cleared) {$presetParams.Cleared = $Cleared}
+            if ($Approved) {$presetParams.Approved = $Approved}
+            if ($StoreAs) {$presetParams.StoreAs = $StoreAs}
+
             Add-YNABTransaction @presetParams
         } else {
             # Get the budget IDs if the budget was specified by name
@@ -130,7 +153,7 @@ function Add-YNABTransaction {
                 $CategoryID = $categories.Where{$_.Category -like $CategoryName}.CategoryID
                 Write-Verbose "Using category: $CategoryID"
             }
-            
+
             # Setup the POST body
             $body = @{
                 transaction = @{

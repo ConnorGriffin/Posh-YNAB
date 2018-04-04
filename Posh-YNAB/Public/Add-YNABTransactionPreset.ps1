@@ -13,41 +13,34 @@ function Add-YNABTransactionPreset {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='Outflow')]
+    [CmdletBinding(DefaultParameterSetName='NoAmount')]
     param(
-        [Parameter(Mandatory=$true,Position=0)]
+        [Parameter(Position=0)]
+        [Alias('Preset')]
         [String]$PresetName,
 
-        [Parameter(Position=10,ParameterSetName='Amount')]
-        [Parameter(Position=10,ParameterSetName='Inflow')]
-        [Parameter(Position=10,ParameterSetName='Outflow')]
+        [Parameter(Position=10)]
         [Alias('Budget')]
         [String]$BudgetName,
 
         [Parameter(Position=10,DontShow)]
         [String]$BudgetID,
 
-        [Parameter(Position=20,ParameterSetName='Amount')]
-        [Parameter(Position=20,ParameterSetName='Inflow')]
-        [Parameter(Position=20,ParameterSetName='Outflow')]
+        [Parameter(Position=20)]
         [Alias('Account')]
         [String]$AccountName,
 
         [Parameter(Position=20,DontShow)]
         [String]$AccountID,
 
-        [Parameter(Position=30,ParameterSetName='Amount')]
-        [Parameter(Position=30,ParameterSetName='Inflow')]
-        [Parameter(Position=30,ParameterSetName='Outflow')]
+        [Parameter(Position=30)]
         [Alias('Payee')]
         [String]$PayeeName,
 
         [Parameter(Position=30,DontShow)]
         [String]$PayeeID,
 
-        [Parameter(Position=40,ParameterSetName='Amount')]
-        [Parameter(Position=40,ParameterSetName='Inflow')]
-        [Parameter(Position=40,ParameterSetName='Outflow')]
+        [Parameter(Position=40)]
         [Alias('Category')]
         [String]$CategoryName,
 
@@ -58,18 +51,21 @@ function Add-YNABTransactionPreset {
         [String]$Memo,
 
         [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow')]
+        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
         [Double]$Outflow,
 
         [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow')]
+        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
         [Double]$Inflow,
 
         [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount')]
+        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
         [Double]$Amount,
 
         [Parameter(Position=70)]
         [Datetime]$Date = (Get-Date),
 
-        [Parameter(Mandatory=$true,Position=80)]
+        [Parameter(Position=80)]
         $Token,
 
         [Parameter(Position=90)]
