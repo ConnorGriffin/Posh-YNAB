@@ -1,20 +1,22 @@
 # Posh-YNAB
 [YNAB API](https://api.youneedabudget.com/) Implementation in PowerShell
 
-## Goals
+## To Do
 
 * Implement functionality for all API endpoints
+* Change tab complete for Category Name to use "CategoryGroup: CategoryName" rather than just "CategoryName" (-CategoryName parameters should support either as valid input)
+* Due to ParameterSet restrictions, add custom required parameter prompting for required parameters that have an ID or Name type. Alternatively accept ID in the Name field, but this would mess with tab complete.  
 * ~~Add AccountName and BudgetName parameters to Get-YNABAccount and Set-YNABDefaults~~
 * ~~Add transaction presets~~
-* BudgetName is set to be accepted from pipeline, but nothing outputs it, so... gotta work on that
+* Add ValueFromPipelineByPropertyName for all applicable parameters
 * Build ArgumentCompleters for all applicable parameters
 * Add comment-based help for all functions
-* Publish to PSGallery
+* Publish to PSGallery, integrate with TravisCI
 * Add Pester tests
 
 ## Endpoint Progress
 
-Attempting to implement functionality for all endpoints listed [here](https://api.youneedabudget.com/v1#/).
+Attempting to implement functionality for all endpoints listed [here](https://api.youneedabudget.com/v1#/), as of 2018-04-04.
 
 ### User
 - ~~[GET] /user~~
