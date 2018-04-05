@@ -56,7 +56,7 @@ $publicFunctions = (Get-ChildItem "$PSScriptRoot\Public\*.ps1")
 $paramsByFunction = $publicFunctions.ForEach{
     . $_.Fullname
     Set-FunctionDefaults $_ $parameters $defaults
-    Export-ModuleMember -Function $_.BaseName
+    #Export-ModuleMember -Function $_.BaseName
 }
 
 # Import private functions, nothing fancy needed here

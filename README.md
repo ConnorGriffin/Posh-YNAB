@@ -13,6 +13,8 @@
 * Add comment-based help for all functions
 * ~~Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))~~
 * Add Pester tests
+* Automatically update FunctionsToExport and AliasesToExport on build
+* Merge all functions into a single .psm1 file on build
 
 ## Endpoint Progress
 
