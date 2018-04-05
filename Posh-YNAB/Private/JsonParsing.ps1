@@ -36,7 +36,7 @@ function Get-ParsedAccountJson {
                 UnclearedBalance = ([double]$_.uncleared_balance / 1000)
                 AccountID = $_.id
             }
-        }
+        } | Sort-Object Account
     }
 }
 
@@ -82,11 +82,11 @@ function Get-ParsedPayeeJson {
             # Return the formatted payee data
             [PSCustomObject]@{
                 Payee = $_.name
-                TransferAccountID = $_.transfer_account_id
                 Location = $location
+                TransferAccountID = $_.transfer_account_id
                 PayeeID = $payeeId
             }
-        }
+        } | Sort-Object Payee
     }
 }
 
@@ -261,7 +261,7 @@ function Get-ParsedCategoryJson {
                         Hidden = $_.hidden
                         CategoryID = $_.id
                     }
-                }
+                } | Sort-Object Category
 
                 # Don't return the category group if there aren't any categories
                 if ($categories) {
@@ -272,7 +272,7 @@ function Get-ParsedCategoryJson {
                         CategoryGroupID = $_.id
                     }
                 }
-            }
+            } | Sort-Object CategoryGroup
         } else {
             $Category.ForEach{
                 # Return the formatted data
@@ -285,7 +285,7 @@ function Get-ParsedCategoryJson {
                     Hidden = $_.hidden
                     CategoryID = $_.id
                 }
-            }
+            } | Sort-Object Category
         }
     }
 }
