@@ -19,8 +19,7 @@ phases:
       # - command
   build:
     commands:
-        - pwsh -Command Write-Host test
-        - pwsh CodeDeploy.ps1 -Phase Build
+        - pwsh ./CodeDeploy.ps1 -Phase Build
         #
   #post_build:
     #commands:
