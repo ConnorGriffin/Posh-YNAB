@@ -9,9 +9,9 @@ version: 0.2
      # key: "value"
 
 phases:
-  #install:
-    #commands:
-      # - command
+  install:
+    commands:
+        - wget -O https://dot.net/v1/dotnet-install.sh | bash
       # - command
   #pre_build:
     #commands:
