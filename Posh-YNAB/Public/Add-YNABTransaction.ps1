@@ -13,7 +13,7 @@ function Add-YNABTransaction {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(DefaultParameterSetName='Outflow')]
+    [CmdletBinding(PositionalBinding=$true)]
     param(
         [Parameter(Position=0)]
         [Alias('Preset')]
@@ -23,40 +23,40 @@ function Add-YNABTransaction {
         [Alias('Budget')]
         [String]$BudgetName,
 
-        [Parameter(Position=10,DontShow)]
+        [Parameter(Position=11,DontShow)]
         [String]$BudgetID,
 
         [Parameter(Position=20)]
         [Alias('Account')]
         [String]$AccountName,
 
-        [Parameter(Position=20,DontShow)]
+        [Parameter(Position=21,DontShow)]
         [String]$AccountID,
 
         [Parameter(Position=30)]
         [Alias('Payee')]
         [String]$PayeeName,
 
-        [Parameter(Position=30,DontShow)]
+        [Parameter(Position=31,DontShow)]
         [String]$PayeeID,
 
         [Parameter(Position=40)]
         [Alias('Category')]
         [String]$CategoryName,
 
-        [Parameter(Position=40,DontShow)]
+        [Parameter(Position=41,DontShow)]
         [String]$CategoryID,
 
         [Parameter(Position=50)]
         [String]$Memo,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Outflow')]
+        [Parameter(Position=60)]
         [Double]$Outflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow')]
+        [Parameter(Position=61)]
         [Double]$Inflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount')]
+        [Parameter(Position=62)]
         [Double]$Amount,
 
         [Parameter(Position=70)]
@@ -113,13 +113,11 @@ function Add-YNABTransaction {
                 $presetParams.Remove('Inflow')
                 $presetParams.Remove('Amount')
                 $presetParams.Outflow = $Outflow
-            }
-            if ($Inflow) {
+            } elseif ($Inflow) {
                 $presetParams.Remove('Outflow')
                 $presetParams.Remove('Amount')
                 $presetParams.Inflow = $Inflow
-            }
-            if ($Amount) {
+            } elseif ($Amount) {
                 $presetParams.Remove('Inflow')
                 $presetParams.Remove('Outflow')
                 $presetParams.Amount = $Amount

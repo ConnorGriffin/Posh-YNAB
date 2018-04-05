@@ -23,28 +23,28 @@ function Add-YNABTransactionPreset {
         [Alias('Budget')]
         [String]$BudgetName,
 
-        [Parameter(Position=10,DontShow)]
+        [Parameter(Position=11,DontShow)]
         [String]$BudgetID,
 
         [Parameter(Position=20)]
         [Alias('Account')]
         [String]$AccountName,
 
-        [Parameter(Position=20,DontShow)]
+        [Parameter(Position=21,DontShow)]
         [String]$AccountID,
 
         [Parameter(Position=30)]
         [Alias('Payee')]
         [String]$PayeeName,
 
-        [Parameter(Position=30,DontShow)]
+        [Parameter(Position=31,DontShow)]
         [String]$PayeeID,
 
         [Parameter(Position=40)]
         [Alias('Category')]
         [String]$CategoryName,
 
-        [Parameter(Position=40,DontShow)]
+        [Parameter(Position=41,DontShow)]
         [String]$CategoryID,
 
         [Parameter(Position=50)]
@@ -54,12 +54,12 @@ function Add-YNABTransactionPreset {
         [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
         [Double]$Outflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow')]
-        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
+        [Parameter(Mandatory=$true,Position=61,ParameterSetName='Inflow')]
+        [Parameter(Mandatory=$false,Position=61,ParameterSetName='NoAmount')]
         [Double]$Inflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount')]
-        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
+        [Parameter(Mandatory=$true,Position=62,ParameterSetName='Amount')]
+        [Parameter(Mandatory=$false,Position=62,ParameterSetName='NoAmount')]
         [Double]$Amount,
 
         [Parameter(Position=70)]
