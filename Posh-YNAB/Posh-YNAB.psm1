@@ -1,5 +1,7 @@
 # Set module-scoped variables used by the module in other places
-$parameters = @('BudgetName','BudgetID','AccountName','AccountID','CategoryName','CategoryID','PresetName','Token')
+$parameters = @('BudgetName','BudgetID','AccountName','AccountID',
+                'CategoryName','CategoryID','PayeeName','PayeeID',
+                'PresetName','Token')
 $moduleRoot = $PSScriptRoot
 $moduleName = 'Posh-YNAB'
 $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'

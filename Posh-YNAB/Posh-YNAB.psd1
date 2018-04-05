@@ -12,7 +12,7 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.3'
+ModuleVersion = '0.0.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -75,6 +75,7 @@ FunctionsToExport = @('Add-YNABTransaction',
                       'Get-YNABAccount',
                       'Get-YNABBudget',
                       'Get-YNABCategory',
+                      'Get-YNABPayee',
                       'Get-YNABUser',
                       'Set-YNABDefaults')
 
