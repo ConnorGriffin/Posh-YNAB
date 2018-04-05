@@ -9,9 +9,9 @@ version: 0.2
      # key: "value"
 
 phases:
-  install:
-    commands:
-        - pwsh ./CodeDeploy.ps1 -Phase Install
+  #install:
+    #commands:
+        #- pwsh ./CodeDeploy.ps1 -Phase Install
   #pre_build:
     #commands:
       # - command
