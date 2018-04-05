@@ -15,38 +15,39 @@
 * Add Pester tests
 * Automatically update FunctionsToExport and AliasesToExport on build
 * Merge all functions into a single .psm1 file on build
+* Add aliases for all functions (remove YNAB piece, so Get-YNABBudget is just Get-Budget)
 
 ## Endpoint Progress
 
 Attempting to implement functionality for all endpoints listed [here](https://api.youneedabudget.com/v1#/), as of 2018-04-04.
 
 ### User
-- ~~[GET] /user~~
+- ~~[GET] /user~~ Get-YNABUser
 
 ### Budgets
-- ~~[GET] /budgets~~
-- [GET] /budgets/{budget_id}
+- ~~[GET] /budgets~~ Get-YNABBudget
+- [GET] /budgets/{budget_id} Get-YNABBudget -BudgetID <budget_id>
 
 ### Accounts
 The Accounts for a budget.
-- ~~[GET] /budgets/{budget_id}/accounts~~
-- ~~[GET] /budgets/{budget_id}/accounts/{account_id}~~
+- ~~[GET] /budgets/{budget_id}/accounts~~ Get-YNABAccount
+- ~~[GET] /budgets/{budget_id}/accounts/{account_id}~~ Get-YNABAccount -AccountID <account_id>
 
 ### Categories
 The Categories for a budget.
-- ~~[GET] /budgets/{budget_id}/categories~~
-- ~~[GET] /budgets/{budget_id}/categories/{category_id}~~
+- ~~[GET] /budgets/{budget_id}/categories~~ Get-YNABCategory
+- ~~[GET] /budgets/{budget_id}/categories/{category_id}~~ Get-YNABCategory -CategoryID <category_id>
 
 ### Payees
 The Payees for a budget.
-- ~~[GET] /budgets/{budget_id}/payees~~
-- ~~[GET] /budgets/{budget_id}/payees/{payee_id}~~
+- ~~[GET] /budgets/{budget_id}/payees~~ Get-YNABPayee
+- ~~[GET] /budgets/{budget_id}/payees/{payee_id}~~ Get-YNABPayee -PayeeID <payee_id>
 
 ### Payee Locations
 When you enter a transaction and specify a payee on the YNAB mobile apps, the GPS coordinates for that location are stored, with your permission, so that the next time you are in the same place (like the Grocery store) we can pre-populate nearby payees for you! It’s handy and saves you time. This resource makes these locations available. Locations will not be available for all payees.
-- [GET] /budgets/{budget_id}/payee_locations
+- ~~[GET] /budgets/{budget_id}/payee_locations~~ Get-YNABPayee -Location
 - [GET] /budgets/{budget_id}/payee_locations/{payee_location_id}
-- [GET] /budgets/{budget_id}/payees/{payee_id}/payee_locations
+- ~~[GET] /budgets/{budget_id}/payees/{payee_id}/payee_locations~~ Get-YNABPayee -PayeeID <payee_id> -Location
 
 ### Months
 Each budget contains one or more months, which is where To be Budgeted, Age of Money and Category (budgeted / activity / balances) amounts are available.
@@ -56,7 +57,7 @@ Each budget contains one or more months, which is where To be Budgeted, Age of M
 ### Transactions
 The Transactions for a budget.
 - [GET] /budgets/{budget_id}/transactions  
-- ~~**[POST] /budgets/{budget_id}/transactions**~~
+- ~~**[POST] /budgets/{budget_id}/transactions**~~ Add-YNABTransaction -BudgetID <budget_id> -AccountID <account_id> etc..
 - [POST] /budgets/{budget_id}/transactions/bulk
 - [GET] /budgets/{budget_id}/accounts/{account_id}/transactions
 - [GET] /budgets/{budget_id}/categories/{category_id}/transactions
