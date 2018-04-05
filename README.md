@@ -11,7 +11,7 @@
 * Add ValueFromPipelineByPropertyName for all applicable parameters
 * Build ArgumentCompleters for all applicable parameters
 * Add comment-based help for all functions
-* Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))
+* ~~Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))~~
 * Add Pester tests
 
 ## Endpoint Progress
