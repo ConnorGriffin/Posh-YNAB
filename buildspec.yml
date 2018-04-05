@@ -11,7 +11,8 @@ version: 0.2
 phases:
   #install:
     #commands:
-        #- pwsh ./CodeDeploy.ps1 -Phase Install
+      # - command
+      # - command
   #pre_build:
     #commands:
       # - command
@@ -19,8 +20,6 @@ phases:
   build:
     commands:
         - pwsh ./CodeDeploy.ps1 -Phase Build
-      # - command
-      # - command
   #post_build:
     #commands:
       # - command
