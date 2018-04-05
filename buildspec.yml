@@ -15,6 +15,7 @@ phases:
         - wget https://dot.net/v1/dotnet-install.sh
         - bash dotnet-install.sh
         - echo $PATH
+        - dotnet --version
   #pre_build:
     #commands:
       # - command
