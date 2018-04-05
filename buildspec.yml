@@ -21,7 +21,7 @@ phases:
       # - command
   build:
     commands:
-        - pwsh ./CodeDeploy.ps1 -Phase Build
+        - pwsh ./CodeDeploy.ps1 -Phase Build -ErrorAction Stop
         #
   #post_build:
     #commands:
