@@ -11,10 +11,15 @@ version: 0.2
 phases:
   install:
     commands:
-        - apt-get install wget
-        - wget https://dot.net/v1/dotnet-install.sh
-        - bash dotnet-install.sh
-        - echo $PATH
+        - curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+        - mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+        - echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-trusty-prod trusty main" > /etc/apt/sources.list.d/dotnetdev.list
+        #- apt-get update
+        #- apt-get install wget
+        #- wget https://dot.net/v1/dotnet-install.sh
+        #- bash dotnet-install.sh
+        #- echo $PATH
+        - apt-get install dotnet-sdk-*
         - dotnet --version
   #pre_build:
     #commands:
