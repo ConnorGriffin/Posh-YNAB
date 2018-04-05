@@ -4,6 +4,8 @@ Switch ($Phase) {
     'Install' {
     }
     'Build' {
-        Write-Host $env:PSModulePath
+        $localModPath = $env:PSModulePath.Split(':')[0]
+        Copy-Item -Recurse ./Posh-YNAB/ $localModPath
+        Publish-Module -Name 'Posh-YNAB' -NugetApiKey $PSGalleryAPIKey
     }
 }
