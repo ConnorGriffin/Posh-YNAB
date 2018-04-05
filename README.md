@@ -39,8 +39,8 @@ The Categories for a budget.
 
 ### Payees
 The Payees for a budget.
-- [GET] /budgets/{budget_id}/payees
-- [GET] /budgets/{budget_id}/payees/{payee_id}
+- ~~[GET] /budgets/{budget_id}/payees~~
+- ~~[GET] /budgets/{budget_id}/payees/{payee_id}~~
 
 ### Payee Locations
 When you enter a transaction and specify a payee on the YNAB mobile apps, the GPS coordinates for that location are stored, with your permission, so that the next time you are in the same place (like the Grocery store) we can pre-populate nearby payees for you! It’s handy and saves you time. This resource makes these locations available. Locations will not be available for all payees.
