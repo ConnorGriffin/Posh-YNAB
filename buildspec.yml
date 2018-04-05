@@ -12,7 +12,7 @@ phases:
   install:
     commands:
         - apt-get install wget
-        - wget https://dot.net/v1/dotnet-install.sh -O | sh
+        - wget https://dot.net/v1/dotnet-install.sh -O - | sh
       # - command
   #pre_build:
     #commands:
