@@ -11,8 +11,7 @@ version: 0.2
 phases:
   install:
     commands:
-        - cat /etc/*eleas*
-        - uname -a
+        - apt-get install wget
         - wget -O https://dot.net/v1/dotnet-install.sh | bash
       # - command
   #pre_build:
