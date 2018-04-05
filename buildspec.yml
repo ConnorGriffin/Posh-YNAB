@@ -20,7 +20,8 @@ phases:
         #- bash dotnet-install.sh
         #- echo $PATH
         - apt-get install dotnet-runtime-2.0.0 -y
-        - dotnet --version
+        #- apt-get install dotnet-sdk-2.1.4 -y
+        #- dotnet --version
   #pre_build:
     #commands:
       # - command
