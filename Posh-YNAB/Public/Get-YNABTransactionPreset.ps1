@@ -34,7 +34,7 @@ function Get-YNABTransactionPreset {
                 'LoadPreset' {
                     $PresetName.ForEach{
                         $name = $_
-                        $presets.GetEnumerator().Where{$_.Name -eq $name}
+                        $presets.GetEnumerator().Where{$_.Name -like $name}
                     }
                 }
                 'List' {
