@@ -175,6 +175,11 @@ function Add-YNABTransaction {
                 $Amount = -[Math]::Abs((Read-Host 'Outflow'))
             }
 
+            # Prompt for token if none has been provided
+            if (!$Token) {
+                $Token = Read-Host 'Token'
+            }
+
             # Setup the POST body
             $body = @{
                 transaction = @{
