@@ -1,21 +1,27 @@
 function Get-YNABTransactionPreset {
     <#
     .SYNOPSIS
-    Describe the function here
+    List transaction presets.
     .DESCRIPTION
-    Describe the function in more detail
+    List transaction presets from the preset file.
     .EXAMPLE
-    Give an example of how to use it
+    Get-YNABTransactionPreset -PresetName 'Coffee'
+    Get the Coffee preset.
     .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+    Get-YNABTransactionPreset -PresetName 'Coffee','Soda'
+    Get the Coffee and Soda presets.
+    .EXAMPLE
+    Get-YNABTransactionPreset -PresetName '*'
+    Get all presets
+    .PARAMETER PresetName
+    The name of the preset to list, accepts a string or array of strings. Supports wildcards.
+    .PARAMETER List
+    Returns a list of all presets
     #>
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
         [Parameter(Mandatory=$true,Position=0,ParameterSetName='LoadPreset')]
+        [Alias('Preset')]
         [String[]]$PresetName,
 
         [Parameter(ParameterSetName='List')]
