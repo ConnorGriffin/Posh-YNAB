@@ -8,7 +8,7 @@ $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
 # Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used elsewhere
-function Set-FunctionDefaults {
+function Set-FunctionDefault {
     Param(
         $File,
         $Parameters,
@@ -48,7 +48,7 @@ $profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
 if (Test-Path $profilePath) {
     # Import the config, if one has been set
     try {$defaults = Import-Clixml "$profilePath\Defaults.xml"}
-    catch {}
+    catch {Write-Error "Failed to import $profilePath\Defaults.xml"}
 } else {
     New-Item -Path $profilePath -Type Directory | Out-Null
 }
@@ -57,7 +57,7 @@ if (Test-Path $profilePath) {
 $publicFunctions = (Get-ChildItem "$PSScriptRoot\Public\*.ps1")
 $paramsByFunction = $publicFunctions.ForEach{
     . $_.Fullname
-    Set-FunctionDefaults $_ $parameters $defaults
+    Set-FunctionDefault $_ $parameters $defaults
     #Export-ModuleMember -Function $_.BaseName
 }
 

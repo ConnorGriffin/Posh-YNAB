@@ -55,6 +55,7 @@ function Add-YNABTransactionPreset {
     Defaults to $true.
     #>
     [CmdletBinding(DefaultParameterSetName='NoAmount')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification='API key are provided as plaintext (See -NuGetApiKey for Publish-Module), so this is actually improving security by storing the keys as a SecureString. AWS has CLI tools that store API keys in plaintext files in a ~\.aws\ folder, for example. See also: https://github.com/PowerShell/PSScriptAnalyzer/issues/574')]
     param(
         [Parameter(Mandatory=$true,Position=0)]
         [Alias('Preset')]
