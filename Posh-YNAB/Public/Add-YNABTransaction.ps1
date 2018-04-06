@@ -1,17 +1,69 @@
 function Add-YNABTransaction {
     <#
     .SYNOPSIS
-    Describe the function here
+    Adds a transaction to YNAB.
     .DESCRIPTION
-    Describe the function in more detail
+    Adds a transaction to YNAB.
     .EXAMPLE
-    Give an example of how to use it
+    Add-YNABTransactionPreset -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
+    Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+    Add-YNABTransactionPreset -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
+    Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
+    Stores the transaction as a preset called 'Coffee' (see: Add-YNABTransactionPreset).
+    .EXAMPLE
+    Add-YNABTransactionPreset -PresetName 'Coffee'
+    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset (see: Get-YNABTransactionPreset).
+    .EXAMPLE
+    Add-YNABTransactionPreset -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
+    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset, but overrides the existing amount and memo, then stores the new details as 'Coffee Refund'. 
+    .PARAMETER PresetName
+    The name of the preset to load (see: Add-YNABTransactionPreset).
+    .PARAMETER BudgetName
+    The name of the budget to add the transaction to.
+    .PARAMETER BudgetID
+    The ID of the budget to add the transaction to.
+    Takes priority over BudgetName if both are provided.
+    .PARAMETER AccountName
+    The name of the account to add the transaction to.
+    .PARAMETER AccountID
+    The ID of the account to add the transaction to.
+    Takes priority over AccountName if both are provided.
+    .PARAMETER PayeeName
+    The name of the payee to add the transaction to.
+    .PARAMETER PayeeID
+    The ID of the payee to add the transaction to.
+    Takes priority over PayeeName if both are provided.
+    .PARAMETER CategoryName
+    The name of the category to add the transaction to.
+    .PARAMETER CategoryID
+    The ID of the category to add the transaction to.
+    Takes priority over CategoryName if both are provided.
+    .PARAMETER Memo
+    Memo for the transaction.
+    .PARAMETER Outflow
+    Outflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Inflow
+    Inflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Amount
+    Amount for the transaction.
+    Negative = Outflow, Positive = Inflow
+    .PARAMETER Date
+    Date for the trarnsaction.
+    Defaults to today.
+    .PARAMETER Token
+    API token used to post the transaction.
+    .PARAMETER FlagColor
+    Flag color for the transaction.
+    .PARAMETER Cleared
+    If specified the transaction will be marked as CLeared.
+    .PARAMETER Approved
+    If specified the transaction will be marked as Approved.
+    Defaults to $true.
+    .PARAMETER StoreAs
+    PresetName to save the transaction as, allowing the transaction details to be re-used with the PresetName parameter (see: Add-YNABTransactionPreset).
     #>
     [CmdletBinding(DefaultParameterSetName='Any')]
     param(

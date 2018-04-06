@@ -6,10 +6,53 @@ function Add-YNABTransactionPreset {
     Add a transaction preset to be used in Add-YNABTransaction.
     Presets are stored in $ENV:AppData\PSModules\Posh-YNAB\Presets.xml
     .EXAMPLE
-    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow '3.50'
+    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50
     Adds a transaction preset called Coffee that can be used in Add-YNABTransaction with Add-YNABTransaction -PresetName 'Coffee'
     .PARAMETER PresetName
     The name of the preset to remove, accepts a string or array of strings. Supports wildcards.
+    .PARAMETER BudgetName
+    The name of the budget to add the transaction to.
+    .PARAMETER BudgetID
+    The ID of the budget to add the transaction to.
+    Takes priority over BudgetName if both are provided.
+    .PARAMETER AccountName
+    The name of the account to add the transaction to.
+    .PARAMETER AccountID
+    The ID of the account to add the transaction to.
+    Takes priority over AccountName if both are provided.
+    .PARAMETER PayeeName
+    The name of the payee to add the transaction to.
+    .PARAMETER PayeeID
+    The ID of the payee to add the transaction to.
+    Takes priority over PayeeName if both are provided.
+    .PARAMETER CategoryName
+    The name of the category to add the transaction to.
+    .PARAMETER CategoryID
+    The ID of the category to add the transaction to.
+    Takes priority over CategoryName if both are provided.
+    .PARAMETER Memo
+    Memo for the transaction.
+    .PARAMETER Outflow
+    Outflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Inflow
+    Inflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Amount
+    Amount for the transaction.
+    Negative = Outflow, Positive = Inflow
+    .PARAMETER Date
+    Date for the trarnsaction.
+    Defaults to today.
+    .PARAMETER Token
+    API token used to post the transaction.
+    .PARAMETER FlagColor
+    Flag color for the transaction.
+    .PARAMETER Cleared
+    If specified the transaction will be marked as CLeared.
+    .PARAMETER Approved
+    If specified the transaction will be marked as Approved.
+    Defaults to $true.
     #>
     [CmdletBinding(DefaultParameterSetName='NoAmount')]
     param(
