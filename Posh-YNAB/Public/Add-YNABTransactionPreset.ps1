@@ -1,21 +1,62 @@
 function Add-YNABTransactionPreset {
     <#
     .SYNOPSIS
-    Describe the function here
+    Add a transaction preset to be used in Add-YNABTransaction.
     .DESCRIPTION
-    Describe the function in more detail
+    Add a transaction preset to be used in Add-YNABTransaction.
+    Presets are stored in $ENV:AppData\PSModules\Posh-YNAB\Presets.xml
     .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50
+    Adds a transaction preset called Coffee that can be used in Add-YNABTransaction with Add-YNABTransaction -PresetName 'Coffee'
+    .PARAMETER PresetName
+    The name of the preset to remove, accepts a string or array of strings. Supports wildcards.
+    .PARAMETER BudgetName
+    The name of the budget to add the transaction to.
+    .PARAMETER BudgetID
+    The ID of the budget to add the transaction to.
+    Takes priority over BudgetName if both are provided.
+    .PARAMETER AccountName
+    The name of the account to add the transaction to.
+    .PARAMETER AccountID
+    The ID of the account to add the transaction to.
+    Takes priority over AccountName if both are provided.
+    .PARAMETER PayeeName
+    The name of the payee to add the transaction to.
+    .PARAMETER PayeeID
+    The ID of the payee to add the transaction to.
+    Takes priority over PayeeName if both are provided.
+    .PARAMETER CategoryName
+    The name of the category to add the transaction to.
+    .PARAMETER CategoryID
+    The ID of the category to add the transaction to.
+    Takes priority over CategoryName if both are provided.
+    .PARAMETER Memo
+    Memo for the transaction.
+    .PARAMETER Outflow
+    Outflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Inflow
+    Inflow amount for the transaction.
+    Uses absolute value, so a positive or negative number can be provided.
+    .PARAMETER Amount
+    Amount for the transaction.
+    Negative = Outflow, Positive = Inflow
+    .PARAMETER Date
+    Date for the trarnsaction.
+    Defaults to today.
+    .PARAMETER Token
+    API token used to post the transaction.
+    .PARAMETER FlagColor
+    Flag color for the transaction.
+    .PARAMETER Cleared
+    If specified the transaction will be marked as CLeared.
+    .PARAMETER Approved
+    If specified the transaction will be marked as Approved.
+    Defaults to $true.
     #>
     [CmdletBinding(DefaultParameterSetName='NoAmount')]
     param(
-        [Parameter(Position=0)]
+        [Parameter(Mandatory=$true,Position=0)]
         [Alias('Preset')]
         [String]$PresetName,
 
@@ -23,28 +64,28 @@ function Add-YNABTransactionPreset {
         [Alias('Budget')]
         [String]$BudgetName,
 
-        [Parameter(Position=10,DontShow)]
+        [Parameter(Position=11,DontShow)]
         [String]$BudgetID,
 
         [Parameter(Position=20)]
         [Alias('Account')]
         [String]$AccountName,
 
-        [Parameter(Position=20,DontShow)]
+        [Parameter(Position=21,DontShow)]
         [String]$AccountID,
 
         [Parameter(Position=30)]
         [Alias('Payee')]
         [String]$PayeeName,
 
-        [Parameter(Position=30,DontShow)]
+        [Parameter(Position=31,DontShow)]
         [String]$PayeeID,
 
         [Parameter(Position=40)]
         [Alias('Category')]
         [String]$CategoryName,
 
-        [Parameter(Position=40,DontShow)]
+        [Parameter(Position=41,DontShow)]
         [String]$CategoryID,
 
         [Parameter(Position=50)]
@@ -54,12 +95,12 @@ function Add-YNABTransactionPreset {
         [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
         [Double]$Outflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Inflow')]
-        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
+        [Parameter(Mandatory=$true,Position=61,ParameterSetName='Inflow')]
+        [Parameter(Mandatory=$false,Position=61,ParameterSetName='NoAmount')]
         [Double]$Inflow,
 
-        [Parameter(Mandatory=$true,Position=60,ParameterSetName='Amount')]
-        [Parameter(Mandatory=$false,Position=60,ParameterSetName='NoAmount')]
+        [Parameter(Mandatory=$true,Position=62,ParameterSetName='Amount')]
+        [Parameter(Mandatory=$false,Position=62,ParameterSetName='NoAmount')]
         [Double]$Amount,
 
         [Parameter(Position=70)]

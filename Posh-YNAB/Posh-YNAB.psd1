@@ -12,7 +12,7 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.4'
+ModuleVersion = '0.0.5'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -72,6 +72,7 @@ Description = 'PowerShell Implementation for YNAB API'
 FunctionsToExport = @('Add-YNABTransaction',
                       'Add-YNABTransactionPreset',
                       'Get-YNABTransactionPreset',
+                      'Remove-YNABTransactionPreset',
                       'Get-YNABAccount',
                       'Get-YNABBudget',
                       'Get-YNABCategory',
