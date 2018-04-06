@@ -200,16 +200,13 @@ function Add-YNABTransaction {
             if ($FlagColor) {$body.transaction.flag_color = $FlagColor.ToLower()}
 
             $response = Invoke-RestMethod "$uri/budgets/$BudgetID/transactions" -Headers $header -Body ($body | ConvertTo-Json) -Method 'POST'
-            <#@{
-                uri = "$uri/budgets/$BudgetID/transactions"
-                headers = $header
-                body = ($body | ConvertTo-Json)
-                method = 'Post'
-            }#>
+
+            # Return parsed details
             if ($response) {
                 Get-ParsedTransactionJson $response.data.transaction
             }
 
+            # Save the Preset if StoreAs is provided
             if ($StoreAs) {
                 $params = $PSBoundParameters
                 [Void]$params.Remove('StoreAs')
