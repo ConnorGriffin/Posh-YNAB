@@ -1,4 +1,4 @@
-function Set-YNABDefaults {
+function Set-YNABDefault {
     <#
     .SYNOPSIS
     Describe the function here
@@ -14,6 +14,7 @@ function Set-YNABDefaults {
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
     [CmdletBinding()]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification='API key are provided as plaintext (See -NuGetApiKey for Publish-Module), so this is actually improving security by storing the keys as a SecureString. AWS has CLI tools that store API keys in plaintext files in a ~\.aws\ folder, for example. See also: https://github.com/PowerShell/PSScriptAnalyzer/issues/574')]
     param(
         [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='BudgetName')]
         [String]$BudgetName,
