@@ -5,17 +5,18 @@
 
 * Implement functionality for all API endpoints
 * Change tab complete for Category Name to use "CategoryGroup: CategoryName" rather than just "CategoryName" (-CategoryName parameters should support either as valid input)
-* Due to ParameterSet restrictions, add custom required parameter prompting for required parameters that have an ID or Name type. Alternatively accept ID in the Name field, but this would mess with tab complete.  
+* ~~Due to ParameterSet restrictions, add custom required parameter prompting for required parameters that have an ID or Name type. Alternatively accept ID in the Name field, but this would mess with tab complete.~~  
 * ~~Add AccountName and BudgetName parameters to Get-YNABAccount and Set-YNABDefaults~~
 * ~~Add transaction presets~~
 * Add ValueFromPipelineByPropertyName for all applicable parameters
-* Build ArgumentCompleters for all applicable parameters
+* ~~Build ArgumentCompleters for all applicable parameters~~
 * Add comment-based help for all functions
 * ~~Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))~~
 * Add Pester tests
 * Automatically update FunctionsToExport and AliasesToExport on build
 * Merge all functions into a single .psm1 file on build
 * Add aliases for all functions (remove YNAB piece, so Get-YNABBudget is just Get-Budget)
+* Add support for transfer transactions
 
 ## Endpoint Progress
 
