@@ -13,9 +13,13 @@ function Add-YNABTransaction {
     .PARAMETER logname
     The name of a file to write failed computer names to. Defaults to errors.txt.
     #>
-    [CmdletBinding(PositionalBinding=$true)]
+    [CmdletBinding(DefaultParameterSetName='Any')]
     param(
-        [Parameter(Position=0)]
+        [Parameter(Position=0,Mandatory=$false,ParameterSetName='Any')]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset')]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Outflow')]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Inflow')]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Amount')]
         [Alias('Preset')]
         [String]$PresetName,
 
@@ -50,13 +54,20 @@ function Add-YNABTransaction {
         [Parameter(Position=50)]
         [String]$Memo,
 
-        [Parameter(Position=60)]
+        [Parameter(Position=60,Mandatory=$false,ParameterSetName='Any')]
+        [Parameter(Position=60,Mandatory=$false,ParameterSetName='Preset')]
+        [Parameter(Position=60,Mandatory=$true,ParameterSetName='Preset,Outflow')]
         [Double]$Outflow,
 
-        [Parameter(Position=61)]
+
+        [Parameter(Position=61,Mandatory=$false,ParameterSetName='Any')]
+        [Parameter(Position=61,Mandatory=$false,ParameterSetName='Preset')]
+        [Parameter(Position=61,Mandatory=$true,ParameterSetName='Preset,Inflow')]
         [Double]$Inflow,
 
-        [Parameter(Position=62)]
+        [Parameter(Position=62,Mandatory=$false,ParameterSetName='Any')]
+        [Parameter(Position=62,Mandatory=$false,ParameterSetName='Preset')]
+        [Parameter(Position=62,Mandatory=$true,ParameterSetName='Preset,Amount')]
         [Double]$Amount,
 
         [Parameter(Position=70)]
@@ -84,13 +95,6 @@ function Add-YNABTransaction {
 
         # Set the default header value for Invoke-RestMethod
         if ($Token) {$header = Get-Header $Token}
-
-        # Set Amount if Outflow or Inflow is provided
-        if ($Outflow) {
-            $Amount = -$Outflow
-        } elseif ($Inflow) {
-            $Amount = $Inflow
-        }
     }
 
     process {
@@ -134,6 +138,9 @@ function Add-YNABTransaction {
             # Get the budget IDs if the budget was specified by name
             if (!$BudgetID) {
                 $budgets = Get-YNABBudget -List -Token $Token
+                if (!$BudgetName) {
+                    $BudgetName = Read-Host 'BudgetName'
+                }
                 $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
                 Write-Verbose "Using budget: $BudgetID"
             }
@@ -141,6 +148,9 @@ function Add-YNABTransaction {
             # Get the account ID if the account was specified by name
             if (!$AccountID) {
                 $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
+                if (!$AccountName) {
+                    $AccountName = Read-Host 'AccountName'
+                }
                 $AccountID = $accounts.Where{$_.Account -like $AccountName}.AccountID
                 Write-Verbose "Using account: $AccountID"
             }
@@ -148,8 +158,21 @@ function Add-YNABTransaction {
             # Get the category ID if the category was specified by name
             if (!$CategoryID) {
                 $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
+                if (!$CategoryName) {
+                    $CategoryName = Read-Host 'CategoryName'
+                }
                 $CategoryID = $categories.Where{$_.Category -like $CategoryName}.CategoryID
                 Write-Verbose "Using category: $CategoryID"
+            }
+
+            # Set Amount if Outflow or Inflow is provided, use negative or positive absolute value respectively
+            if ($Outflow) {
+                $Amount = -[Math]::Abs($Outflow)
+            } elseif ($Inflow) {
+                $Amount = [Math]::Abs($Inflow)
+            } elseif (!$Amount) {
+                # If none are provided, prompt for an outflow amount
+                $Amount = -[Math]::Abs((Read-Host 'Outflow'))
             }
 
             # Setup the POST body
