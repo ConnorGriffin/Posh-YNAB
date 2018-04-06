@@ -72,6 +72,7 @@ Description = 'PowerShell Implementation for YNAB API'
 FunctionsToExport = @('Add-YNABTransaction',
                       'Add-YNABTransactionPreset',
                       'Get-YNABTransactionPreset',
+                      'Remove-YNABTransactionPreset',
                       'Get-YNABAccount',
                       'Get-YNABBudget',
                       'Get-YNABCategory',
