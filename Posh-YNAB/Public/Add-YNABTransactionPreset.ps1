@@ -6,7 +6,7 @@ function Add-YNABTransactionPreset {
     Add a transaction preset to be used in Add-YNABTransaction.
     Presets are stored in $ENV:AppData\PSModules\Posh-YNAB\Presets.xml
     .EXAMPLE
-    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountID 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow '3.50'
+    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow '3.50'
     Adds a transaction preset called Coffee that can be used in Add-YNABTransaction with Add-YNABTransaction -PresetName 'Coffee'
     .PARAMETER PresetName
     The name of the preset to remove, accepts a string or array of strings. Supports wildcards.
