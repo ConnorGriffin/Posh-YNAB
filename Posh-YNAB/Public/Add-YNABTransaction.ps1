@@ -5,18 +5,18 @@ function Add-YNABTransaction {
     .DESCRIPTION
     Adds a transaction to YNAB.
     .EXAMPLE
-    Add-YNABTransactionPreset -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
+    Add-YNABTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     .EXAMPLE
-    Add-YNABTransactionPreset -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
+    Add-YNABTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     Stores the transaction as a preset called 'Coffee' (see: Add-YNABTransactionPreset).
     .EXAMPLE
-    Add-YNABTransactionPreset -PresetName 'Coffee'
+    Add-YNABTransaction -PresetName 'Coffee'
     Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset (see: Get-YNABTransactionPreset).
     .EXAMPLE
-    Add-YNABTransactionPreset -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
-    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset, but overrides the existing amount and memo, then stores the new details as 'Coffee Refund'. 
+    Add-YNABTransaction -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
+    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset, but overrides the existing amount and memo, then stores the new details as 'Coffee Refund'.
     .PARAMETER PresetName
     The name of the preset to load (see: Add-YNABTransactionPreset).
     .PARAMETER BudgetName
