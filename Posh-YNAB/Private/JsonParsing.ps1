@@ -3,18 +3,7 @@
 function Get-ParsedAccountJson {
     <#
     .SYNOPSIS
-        Short description
-    .DESCRIPTION
-        Long description
-    .EXAMPLE
-        PS C:\> <example usage>
-        Explanation of what the example does
-    .INPUTS
-        Inputs (if any)
-    .OUTPUTS
-        Output (if any)
-    .NOTES
-        General notes
+        Converts the account API data to a consistent format for use within the Posh-YNAB module.
     #>
     [CmdletBinding()]
     param(
