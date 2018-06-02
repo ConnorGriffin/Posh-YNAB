@@ -3,40 +3,63 @@
 function Get-ParsedAccountJson {
     <#
     .SYNOPSIS
-    Describe the function here
+        Short description
     .DESCRIPTION
-    Describe the function in more detail
+        Long description
     .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+        PS C:\> <example usage>
+        Explanation of what the example does
+    .INPUTS
+        Inputs (if any)
+    .OUTPUTS
+        Output (if any)
+    .NOTES
+        General notes
     #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true,ValueFromPipeline)]
-        [Object[]]$Account
+        [Object[]]$Account,
+        
+        [Switch]$NoParse
     )
 
-    begin {}
+    begin {
+        $parsedData = @()
+        $sortProp = @(
+            @{
+                Expression = 'OnBudget'
+                Descending = $true
+            },
+            @{Expression = 'Closed'},
+            @{Expression = 'Account'}
+        )
+    }
 
     process {
-        $Account.ForEach{
-            [PSCustomObject]@{
-                Account = $_.name
-                Type = $_.type
-                OnBudget = $_.on_budget
-                Closed = $_.closed
-                Note = $_.note
-                Balance = ([double]$_.balance / 1000)
-                ClearedBalance = ([double]$_.cleared_balance / 1000)
-                UnclearedBalance = ([double]$_.uncleared_balance / 1000)
-                AccountID = $_.id
+        $parsedData += $Account.ForEach{
+            if (!$NoParse) {
+                $object = [PSCustomObject]@{
+                    Account = $_.name
+                    Balance = ([double]$_.balance / 1000)
+                    Type = $_.type
+                    OnBudget = $_.on_budget
+                    Closed = $_.closed
+                    Note = $_.note
+                    ClearedBalance = ([double]$_.cleared_balance / 1000)
+                    UnclearedBalance = ([double]$_.uncleared_balance / 1000)
+                    AccountID = $_.id
+                }
+                $object.PSObject.TypeNames.Insert(0,'YNAB.Account')
+                $object
+            } else {
+                $_
             }
-        } | Sort-Object Account
+        } 
+    }
+
+    end {
+        $parsedData | Sort-Object $sortProp
     }
 }
 

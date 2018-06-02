@@ -42,7 +42,10 @@ function Get-YNABAccount {
         [Switch]$IncludeClosed,
 
         [Parameter(Mandatory=$true)]
-        $Token
+        $Token,
+
+        [Parameter(DontShow)]
+        [Switch]$NoParse
     )
 
     begin {
@@ -80,7 +83,7 @@ function Get-YNABAccount {
                         if (!$IncludeClosed) {$_.closed -ne $true}
                         else {$_}
                     }
-                    Get-ParsedAccountJson $data
+                    Get-ParsedAccountJson $data -NoParse:$NoParse
                 }
             }
             'Detail*' {
@@ -88,7 +91,7 @@ function Get-YNABAccount {
                 $AccountID.ForEach{
                     $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts/$_" -Headers $header
                     if ($response) {
-                        Get-ParsedAccountJson $response.data.account
+                        Get-ParsedAccountJson $response.data.account -NoParse:$NoParse
                     }
                 }
             }
