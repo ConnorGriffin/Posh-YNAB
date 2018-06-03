@@ -5,10 +5,10 @@ function Add-YnabTransaction {
     .DESCRIPTION
     Adds a transaction to YNAB.
     .EXAMPLE
-    Add-YnabTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
+    Add-YnabTransaction -Budget 'TestBudget' -Account 'Checking' -Category 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     .EXAMPLE
-    Add-YnabTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
+    Add-YnabTransaction -Budget 'TestBudget' -Account 'Checking' -Category 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     Stores the transaction as a preset called 'Coffee' (see: Add-YnabTransactionPreset).
     .EXAMPLE
@@ -198,14 +198,10 @@ function Add-YnabTransaction {
             $presetParams = (Get-YnabTransactionPreset $Preset).Value
 
             # Override preset data with values for any provided named parameters
-            if ($BudgetName) {$presetParams.BudgetName = $BudgetName}
-            if ($BudgetID) {$presetParams.BudgetID = $BudgetID}
-            if ($AccountName) {$presetParams.AccountName = $AccountName}
-            if ($AccountID) {$presetParams.AccountID = $AccountID}
-            if ($PayeeName) {$presetParams.PayeeName = $PayeeName}
-            if ($PayeeID) {$presetParams.PayeeID = $PayeeID}
-            if ($CategoryName) {$presetParams.CategoryName = $CategoryName}
-            if ($CategoryID) {$presetParams.CategoryID = $CategoryID}
+            if ($Budget) {$presetParams.Budget = $Budget}
+            if ($Account) {$presetParams.Account = $Account}
+            if ($Payee) {$presetParams.Payee = $Payee}
+            if ($Category) {$presetParams.Category = $Category}
             if ($Memo) {$presetParams.Memo = $Memo}
             if ($Outflow) {
                 $presetParams.Remove('Inflow')
@@ -229,35 +225,26 @@ function Add-YnabTransaction {
 
             Add-YnabTransaction @presetParams
         } else {
-            # Get the budget IDs if the budget was specified by name
-            if (!$BudgetID) {
-                $budgets = Get-YnabBudget -List -Token $Token
-                if (!$BudgetName) {
-                    $BudgetName = Read-Host 'BudgetName'
-                }
-                $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
-                Write-Verbose "Using budget: $BudgetID"
+            # Get the budget details
+            if (!$Budget) {
+                $Budget = Read-Host 'Budget'
             }
+            $budgets = Get-YnabBudget -ListAll -Token $Token
+            $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
 
-            # Get the account ID if the account was specified by name
-            if (!$AccountID) {
-                $accounts = Get-YnabAccount -List -BudgetID $BudgetID -Token $Token
-                if (!$AccountName) {
-                    $AccountName = Read-Host 'AccountName'
-                }
-                $AccountID = $accounts.Where{$_.Account -like $AccountName}.AccountID
-                Write-Verbose "Using account: $AccountID"
+            # Get the account details
+            if (!$Account) {
+                $Account = Read-Host 'Account'
             }
+            $accounts = Get-YnabAccount -Budget $Budget -Token $Token
+            $accountId = $accounts.Where{$_.Account -eq $Account}.AccountID
 
-            # Get the category ID if the category was specified by name
-            if (!$CategoryID) {
-                $categories = (Get-YnabCategory -List -BudgetID $BudgetID -Token $Token).Categories
-                if (!$CategoryName) {
-                    $CategoryName = Read-Host 'CategoryName'
-                }
-                $CategoryID = $categories.Where{$_.Category -like $CategoryName}.CategoryID
-                Write-Verbose "Using category: $CategoryID"
+            # Get the category details
+            if (!$Category) {
+                $Category = Read-Host 'Category'
             }
+            $categories = (Get-YnabCategory -List -Budget $Budget -Token $Token).Categories
+            $categoryId = $categories.Where{$_.Category -like $Category}.CategoryID
 
             # Set Amount if Outflow or Inflow is provided, use negative or positive absolute value respectively
             if ($Outflow) {
@@ -277,23 +264,21 @@ function Add-YnabTransaction {
             # Setup the POST body
             $body = @{
                 transaction = @{
-                    account_id = $AccountID
+                    account_id = $accountId
                     date = $Date.ToString('yyyy-MM-dd')
                     amount = $Amount * 1000
-                    category_id = $CategoryID
+                    category_id = $categoryId
                     approved = $Approved
                 }
             }
 
             # Add the optionbal parameters
-            if ($PayeeID) {$body.transaction.payee_id = $PayeeID}
-            elseif ($PayeeName) {$body.transaction.payee_name = $PayeeName}
-
+            if ($Payee) {$body.transaction.payee_name = $Payee}
             if ($Memo) {$body.transaction.memo = $Memo}
             if ($Cleared) {$body.transaction.cleared = 'cleared'}
             if ($FlagColor) {$body.transaction.flag_color = $FlagColor.ToLower()}
 
-            $response = Invoke-RestMethod "$uri/budgets/$BudgetID/transactions" -Headers $header -Body ($body | ConvertTo-Json) -Method 'POST'
+            $response = Invoke-RestMethod "$uri/budgets/$budgetId/transactions" -Headers $header -Body ($body | ConvertTo-Json) -Method 'POST'
 
             # Return parsed details
             if ($response) {
@@ -305,15 +290,7 @@ function Add-YnabTransaction {
                 $params = $PSBoundParameters
                 [Void]$params.Remove('StoreAs')
 
-                # Replace *Name parameters with ID, which will speed up future calls
-                [Void]$params.Remove('BudgetName')
-                [Void]$params.Remove('AccountName')
-                [Void]$params.Remove('CategoryName')
-                $params.Add('BudgetID',$BudgetID)
-                $params.Add('AccountID',$AccountID)
-                $params.Add('CategoryID',$CategoryID)
-
-                Add-YnabTransactionPreset -PresetName $StoreAs @params
+                Add-YnabTransactionPreset -Preset $StoreAs @params
             }
         }
     }

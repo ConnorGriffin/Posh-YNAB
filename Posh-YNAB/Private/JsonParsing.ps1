@@ -148,6 +148,7 @@ function Get-ParsedTransactionJson {
 
     begin {
         Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        $parsedData = @()
     }
 
     process {
@@ -158,7 +159,7 @@ function Get-ParsedTransactionJson {
                     $ParsedPayee = Get-ParsedPayeeJson $Payee $PayeeLocation
                 }
 
-                $Transaction.ForEach{
+                $parsedData += $Transaction.ForEach{
                     $transId = $_.id
                     $payeeId = $_.payee_id
                     $payee = $ParsedPayee.Where{$_.PayeeId -eq $payeeId}
@@ -177,9 +178,10 @@ function Get-ParsedTransactionJson {
                             #CategoryID
                         }
                     }
+                    $subtrans.PSObject.TypeNames.Insert(0,'Ynab.Transaction')
 
                     # Return the formatted transaction data
-                    [PSCustomObject]@{
+                    $object = [PSCustomObject]@{
                         Date = [datetime]::ParseExact($_.date,'yyyy-MM-dd',$null)
                         Amount = ([double]$_.amount / 1000)
                         Memo = $_.memo
@@ -192,10 +194,12 @@ function Get-ParsedTransactionJson {
                         PayeeID = $payee.PayeeId
                         #CategoryID
                     }
+                    $object.PSObject.TypeNames.Insert(0,'Ynab.Transaction')
+                    $object
                 }
             }
             'TransactionResponse' {
-                $Transaction.ForEach{
+                $parsedData += $Transaction.ForEach{
                     # Build an object of longitude/latidude data for the current payee
                     $subtrans = $_.subtransaction.ForEach{
                         [PSCustomObject]@{
@@ -209,9 +213,10 @@ function Get-ParsedTransactionJson {
                             AccountID = $_.account_id
                         }
                     }
+                    $subtrans.PSObject.TypeNames.Insert(0,'Ynab.Transaction')
 
                     # Return the formatted transaction data
-                    [PSCustomObject]@{
+                    $object = [PSCustomObject]@{
                         Date = [datetime]::ParseExact($_.date,'yyyy-MM-dd',$null)
                         Amount = ([double]$_.amount / 1000)
                         Memo = $_.memo
@@ -226,9 +231,15 @@ function Get-ParsedTransactionJson {
                         CategoryID = $_.category_id
                         AccountID = $_.account_id
                     }
+                    $object.PSObject.TypeNames.Insert(0,'Ynab.Transaction')
+                    $object
                 }
             }
         }
+    }
+
+    end {
+        $parsedData
     }
 }
 

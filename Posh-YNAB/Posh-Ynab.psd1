@@ -65,7 +65,8 @@ Description = 'PowerShell Implementation for YNAB API'
 # Format files (.ps1xml) to be loaded when importing this module
 FormatsToProcess = @('Formats\Ynab.Account.ps1xml',
                      'Formats\Ynab.Payee.ps1xml',
-                     'Formats\Ynab.PayeeWithLocation.ps1xml')
+                     'Formats\Ynab.PayeeWithLocation.ps1xml',
+                     'Formats\Ynab.Transaction.ps1xml')
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
