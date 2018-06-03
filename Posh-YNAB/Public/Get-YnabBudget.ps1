@@ -1,30 +1,21 @@
 function Get-YnabBudget {
-    <#
-    .SYNOPSIS
-    Describe the function here
-    .DESCRIPTION
-    Describe the function in more detail
-    .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
-    #>
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName')]
-        [String[]]$BudgetName,
+        # Return details for a specific budget or list of budgets by name.
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Detail')]
+        [String[]]$Budget,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID')]
-        [String[]]$BudgetID,
-
+        # Return a list of budgets rather than details for a specific budget.
         [Parameter(ParameterSetName='List')]
-        [Switch]$List,
+        [Switch]$ListAll,
 
-        [Parameter(Mandatory=$true)]
+        # YNAB API token.
+        [Parameter(Mandatory,
+                   Position=1)]
         $Token
     )
 
@@ -33,22 +24,21 @@ function Get-YnabBudget {
         
         # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
+
+        # Get all budgets here so we don't repeat it for each $Budget 
+        if ($PsCmdlet.ParameterSetName -eq 'Detail') {
+            $budgets = Get-YnabBudget -ListAll -Token $Token
+        }
     }
 
     process {
-        # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
-        if ($BudgetName) {
-            $budgets = Get-YnabBudget -Token $Token -List
-            $budgetId = $budgets.Where{$_.Budget -eq $BudgetName}.BudgetID
-        }
-
-        switch -Wildcard ($PsCmdlet.ParameterSetName) {
+        # Perform a recursive lookup, filtering by name and then looking up by ID
+        switch ($PsCmdlet.ParameterSetName) {
             'List' {
                 # Return a list of budgets if no ID is specified or if ListAvailable is supplied
                 $response = Invoke-RestMethod "$uri/budgets" -Headers $header
                 if ($response) {
-                    $budgets = $response.data.budgets
-                    $budgets.ForEach{
+                    $response.data.budgets.ForEach{
                         [PSCustomObject]@{
                             Budget = $_.name
                             LastModified = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
@@ -70,35 +60,36 @@ function Get-YnabBudget {
                     }
                 }
             }
-            'Detail*' {
-                # Return details of each provided BudgetID
-                $BudgetID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$_" -Headers $header
+            'Detail' {
+                # Return details of each provided Budget
+                foreach ($budgetName in $Budget) {
+                    $budgetId = $budgets.Where{$_.Budget -eq $budgetName}.BudgetID
+                    $response = Invoke-RestMethod "$uri/budgets/$budgetId" -Headers $header
                     if ($response) {
-                        $budget = $response.data.budget
-                        $accounts = Get-ParsedAccountJson $budget.accounts
-                        $payees = Get-ParsedPayeeJson $budget.payees $budget.payee_locations
-                        $transactions = Get-ParsedTransactionJson $budget.transactions $budget.subtransactions -ParsedPayee $payees
+                        $budgetData = $response.data.budget
+                        $accounts = Get-ParsedAccountJson $budgetData.accounts
+                        $payees = Get-ParsedPayeeJson $budgetData.payees $budgetData.payee_locations
+                        $transactions = Get-ParsedTransactionJson $budgetData.transactions $budgetData.subtransactions -ParsedPayee $payees
                         [PSCustomObject]@{
-                            Budget = $budget.budget
-                            LastModified = [datetime]::ParseExact($budget.last_modified_on, $dateFormat, $null).ToLocalTime()
-                            FirstMonth = [datetime]::ParseExact($budget.first_month,'yyyy-MM-dd',$null)
-                            LastMonth = [datetime]::ParseExact($budget.last_month,'yyyy-MM-dd',$null)
-                            DateFormat = $budget.date_format.format
+                            Budget = $budgetData.name
+                            LastModified = [datetime]::ParseExact($budgetData.last_modified_on, $dateFormat, $null).ToLocalTime()
+                            FirstMonth = [datetime]::ParseExact($budgetData.first_month,'yyyy-MM-dd',$null)
+                            LastMonth = [datetime]::ParseExact($budgetData.last_month,'yyyy-MM-dd',$null)
+                            DateFormat = $budgetData.date_format.format
                             CurrencyFormat = [PSCustomObject]@{
-                                ISOCode = $budget.currency_format.iso_code
-                                ExampleFormat = $budget.currency_format.example_format
-                                DecimalDigits = $budget.currency_format.decimal_digits
-                                DecimalSeparator = $budget.currency_format.decimal_separator
-                                SymbolFirst = $budget.currency_format.symbol_first
-                                GroupSeparator = $budget.currency_format.group_separator
-                                CurrencySymbol = $budget.currency_format.currency_symbol
-                                DisplaySymbol = $budget.currency_format.display_symbol
+                                ISOCode = $budgetData.currency_format.iso_code
+                                ExampleFormat = $budgetData.currency_format.example_format
+                                DecimalDigits = $budgetData.currency_format.decimal_digits
+                                DecimalSeparator = $budgetData.currency_format.decimal_separator
+                                SymbolFirst = $budgetData.currency_format.symbol_first
+                                GroupSeparator = $budgetData.currency_format.group_separator
+                                CurrencySymbol = $budgetData.currency_format.currency_symbol
+                                DisplaySymbol = $budgetData.currency_format.display_symbol
                             }
                             Accounts = $accounts
                             Payees = $payees
                             Transactions = $transactions
-                            BudgetID = $budget.id
+                            BudgetID = $budgetData.id
                             <# TODO: Implement:
                             Categories =
                             'Category Groups' =

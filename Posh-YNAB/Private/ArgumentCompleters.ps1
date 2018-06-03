@@ -1,7 +1,7 @@
 # Tab completers
-$budgetName = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'BudgetName'}.Function
-    Parameter = 'BudgetName'
+$budget = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'Budget'}.Function
+    Parameter = 'Budget'
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 
@@ -10,32 +10,31 @@ $budgetName = @{
             $token = $fakeBoundParameter.Token
         } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } else {
+            return
         }
 
-        # Only continue trying to complete if a token was provided
-        if ($token) {
-            # Get a list of all budgets
-            $budgets = Get-YnabBudget -Token $token -List | Sort-Object Name
+        # Get a list of all budgets
+        $budgets = Get-YnabBudget -Token $token -ListAll | Sort-Object Name
 
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
+        # Trim quotes from the $wordToComplete
+        $wordMatch = $wordToComplete.Trim("`"`'")
 
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $budgets.Where{$_.Budget -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Budget)`"",
-                    $_.Budget,
-                    'ParameterValue',
-                    $_.Budget
-                )
-            }
+        # Add a CompletionResult for each budget name matching wordToComplete
+        $budgets.Where{$_.Budget -like "*$wordMatch*"}.ForEach{
+            New-Object System.Management.Automation.CompletionResult (
+                "`"$($_.Budget)`"",
+                $_.Budget,
+                'ParameterValue',
+                $_.Budget
+            )
         }
     }
 }
 
-$budgetId = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'BudgetID'}.Function
-    Parameter = 'BudgetID'
+$account = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'Account'}.Function
+    Parameter = 'Account'
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 
@@ -44,32 +43,40 @@ $budgetId = @{
             $token = $fakeBoundParameter.Token
         } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } else {
+            return
         }
 
-        # Only continue trying to complete if a token was provided
-        if ($token) {
-            # Get a list of all budgets
-            $budgets = Get-YnabBudget -Token $token -List | Sort-Object BudgetID
+        # Get the budget name from the pipeline or PSDefaultParamterValues
+        if ($fakeBoundParameter.Budget) {
+            $budget = $fakeBoundParameter.Budget
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } else {
+            return
+        }
 
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
+        # Get a list of all accounts
+        $accounts = Get-YnabAccount -Budget $budget -Token $token | Sort-Object Name
 
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $budgets.Where{$_.BudgetID -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.BudgetID)`"",
-                    $_.BudgetID,
-                    'ParameterValue',
-                    $_.BudgetID
-                )
-            }
+        # Trim quotes from the $wordToComplete
+        $wordMatch = $wordToComplete.Trim("`"`'")
+
+        # Add a CompletionResult for each budget name matching wordToComplete
+        $accounts.Where{$_.Account -like "*$wordMatch*"}.ForEach{
+            New-Object System.Management.Automation.CompletionResult (
+                "`"$($_.Account)`"",
+                $_.Account,
+                'ParameterValue',
+                $_.Account
+            )
         }
     }
 }
 
-$accountName = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'AccountName'}.Function
-    Parameter = 'AccountName'
+$category = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'Category'}.Function
+    Parameter = 'Category'
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 
@@ -78,48 +85,40 @@ $accountName = @{
             $token = $fakeBoundParameter.Token
         } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } else {
+            return
         }
 
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
+        # Get the budget name from the pipeline or PSDefaultParamterValues
+        if ($fakeBoundParameter.Budget) {
+            $budget = $fakeBoundParameter.Budget
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } else {
+            return
         }
 
-        # Build a parameter object for splatting
-        $params = @{}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
+        # Get a list of all accounts
+        $categories = (Get-YnabCategory -Budget $budget -Token $token).Categories | Sort-Object Category
 
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $accounts = Get-YnabAccount @params | Sort-Object Name
+        # Trim quotes from the $wordToComplete
+        $wordMatch = $wordToComplete.Trim("`"`'")
 
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $accounts.Where{$_.Account -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Account)`"",
-                    $_.Account,
-                    'ParameterValue',
-                    $_.Account
-                )
-            }
+        # Add a CompletionResult for each budget name matching wordToComplete
+        $categories.Where{$_.Category -like "*$wordMatch*"}.ForEach{
+            New-Object System.Management.Automation.CompletionResult (
+                "`"$($_.Category)`"",
+                $_.Category,
+                'ParameterValue',
+                $_.Category
+            )
         }
     }
 }
 
-$accountId = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'AccountID'}.Function
-    Parameter = 'AccountID'
+$payee = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'Payee'}.Function
+    Parameter = 'Payee'
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 
@@ -128,248 +127,40 @@ $accountId = @{
             $token = $fakeBoundParameter.Token
         } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
             $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } else {
+            return
         }
 
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
+        # Get the budget name from the pipeline or PSDefaultParamterValues
+        if ($fakeBoundParameter.Budget) {
+            $budget = $fakeBoundParameter.Budget
+        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } else {
+            return
         }
 
-        # Build a parameter object for splatting
-        $params = @{}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
+        # Get a list of all accounts
+        $payees = (Get-YnabPayee -Budget $budget -Token $token) | Sort-Object Payee
 
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $accounts = Get-YnabAccount @params | Sort-Object AccountID
+        # Trim quotes from the $wordToComplete
+        $wordMatch = $wordToComplete.Trim("`"`'")
 
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $accounts.Where{$_.AccountID -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.AccountID)`"",
-                    $_.AccountID,
-                    'ParameterValue',
-                    $_.AccountID
-                )
-            }
+        # Add a CompletionResult for each budget name matching wordToComplete
+        $payees.Where{$_.Payee -like "*$wordMatch*"}.ForEach{
+            New-Object System.Management.Automation.CompletionResult (
+                "`"$($_.Payee)`"",
+                $_.Payee,
+                'ParameterValue',
+                $_.Payee
+            )
         }
     }
 }
 
-$categoryName = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'CategoryName'}.Function
-    Parameter = 'CategoryName'
-    ScriptBlock = {
-        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-
-        # Get the token value from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.Token) {
-            $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
-        }
-
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
-        }
-
-        # Build a parameter object for splatting
-        $params = @{List = $true}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
-
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $categories = (Get-YnabCategory @params).Categories | Sort-Object Category
-
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $categories.Where{$_.Category -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Category)`"",
-                    $_.Category,
-                    'ParameterValue',
-                    $_.Category
-                )
-            }
-        }
-    }
-}
-
-$categoryId = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'CategoryID'}.Function
-    Parameter = 'CategoryID'
-    ScriptBlock = {
-        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-
-        # Get the token value from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.Token) {
-            $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
-        }
-
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
-        }
-
-        # Build a parameter object for splatting
-        $params = @{List = $true}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
-
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $categories = (Get-YnabCategory @params).Categories | Sort-Object Category
-
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $categories.Where{$_.CategoryID -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.CategoryID)`"",
-                    $_.CategoryID,
-                    'ParameterValue',
-                    $_.CategoryID
-                )
-            }
-        }
-    }
-}
-
-$payeeName = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'PayeeName'}.Function
-    Parameter = 'PayeeName'
-    ScriptBlock = {
-        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-
-        # Get the token value from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.Token) {
-            $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
-        }
-
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
-        }
-
-        # Build a parameter object for splatting
-        $params = @{List = $true}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
-
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $payees = (Get-YnabPayee @params) | Sort-Object Payee
-
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $payees.Where{$_.Payee -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.Payee)`"",
-                    $_.Payee,
-                    'ParameterValue',
-                    $_.Payee
-                )
-            }
-        }
-    }
-}
-
-$payeeId = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'PayeeID'}.Function
-    Parameter = 'PayeeID'
-    ScriptBlock = {
-        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
-
-        # Get the token value from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.Token) {
-            $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
-        }
-
-        # Get the budget ID or name from the pipeline or PSDefaultParamterValues
-        if ($fakeBoundParameter.BudgetName -or $fakeBoundParameter.BudgetID) {
-            $budgetName = $fakeBoundParameter.BudgetName
-            $budgetId = $fakeBoundParameter.BudgetID
-        } elseif ($global:PSDefaultParameterValues["${commandName}:BudgetName"] -or $global:PSDefaultParameterValues["${commandName}:BudgetID"]) {
-            $budgetName = $global:PSDefaultParameterValues["${commandName}:BudgetName"]
-            $budgetId = $global:PSDefaultParameterValues["${commandName}:BudgetID"]
-        }
-
-        # Build a parameter object for splatting
-        $params = @{List = $true}
-        if ($token) {$params.Token = $token}
-        # Prioritize ID over name, only include one
-        if ($budgetId) {$params.BudgetID = $budgetId}
-        elseif ($budgetName) {$params.BudgetName = $budgetName}
-
-        # Only continue trying to complete if a token was provided
-        if ($token -and ($budgetId -or $budgetName)) {
-            # Get a list of all accounts
-            $payees = (Get-YnabPayee @params) | Sort-Object PayeeID
-
-            # Trim quotes from the $wordToComplete
-            $wordMatch = $wordToComplete.Trim("`"`'")
-
-            # Add a CompletionResult for each budget name matching wordToComplete
-            $payees.Where{$_.PayeeID -like "*$wordMatch*"}.ForEach{
-                New-Object System.Management.Automation.CompletionResult (
-                    "`"$($_.PayeeID)`"",
-                    $_.PayeeID,
-                    'ParameterValue',
-                    $_.PayeeID
-                )
-            }
-        }
-    }
-}
-
-$presetName = @{
-    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'PresetName'}.Function
-    Parameter = 'PresetName'
+$preset = @{
+    CommandName = $paramsByFunction.Where{$_.Parameter -contains 'Preset'}.Function
+    Parameter = 'Preset'
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
         # Get a list of all accounts
@@ -391,12 +182,8 @@ $presetName = @{
 }
 
 # Register the Argument Completers
-Register-ArgumentCompleter @budgetName
-Register-ArgumentCompleter @budgetId
-Register-ArgumentCompleter @accountName
-Register-ArgumentCompleter @accountId
-Register-ArgumentCompleter @categoryName
-Register-ArgumentCompleter @categoryId
-Register-ArgumentCompleter @payeeName
-Register-ArgumentCompleter @payeeID
-Register-ArgumentCompleter @presetName
+Register-ArgumentCompleter @budget
+Register-ArgumentCompleter @account
+Register-ArgumentCompleter @category
+Register-ArgumentCompleter @payee
+#Register-ArgumentCompleter @preset

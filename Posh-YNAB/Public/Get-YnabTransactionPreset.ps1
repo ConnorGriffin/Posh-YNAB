@@ -13,7 +13,7 @@ function Get-YnabTransactionPreset {
     .EXAMPLE
     Get-YnabTransactionPreset -PresetName '*'
     Get all presets
-    .PARAMETER PresetName
+    .PARAMETER Preset
     The name of the preset to list, accepts a string or array of strings. Supports wildcards.
     .PARAMETER List
     Returns a list of all presets
@@ -22,7 +22,7 @@ function Get-YnabTransactionPreset {
     param(
         [Parameter(Mandatory=$true,Position=0,ParameterSetName='LoadPreset')]
         [Alias('Preset')]
-        [String[]]$PresetName,
+        [String[]]$Preset,
 
         [Parameter(ParameterSetName='List')]
         [Switch]$List
@@ -38,7 +38,7 @@ function Get-YnabTransactionPreset {
 
             switch ($PsCmdlet.ParameterSetName) {
                 'LoadPreset' {
-                    $PresetName.ForEach{
+                    $Preset.ForEach{
                         $name = $_
                         $presets.GetEnumerator().Where{$_.Name -like $name}
                     }

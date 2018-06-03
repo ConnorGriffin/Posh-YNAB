@@ -18,20 +18,11 @@ function Get-YnabCategory {
         [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryName')]
         [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryID')]
         [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
-        [String]$BudgetName,
-
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryName')]
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryID')]
-        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
-        [String]$BudgetID,
+        [String]$Budget,
 
         [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryName')]
         [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryName')]
-        [String[]]$CategoryName,
-
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,CategoryID')]
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,CategoryID')]
-        [String[]]$CategoryID,
+        [String[]]$Category,
 
         [Parameter(ParameterSetName='List:BudgetName')]
         [Parameter(ParameterSetName='List:BudgetID')]
