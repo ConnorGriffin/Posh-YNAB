@@ -21,7 +21,6 @@ function Get-YnabTransactionPreset {
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
         [Parameter(Mandatory=$true,Position=0,ParameterSetName='LoadPreset')]
-        [Alias('Preset')]
         [String[]]$Preset,
 
         [Parameter(ParameterSetName='List')]
