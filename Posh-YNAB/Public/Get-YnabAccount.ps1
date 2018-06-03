@@ -1,97 +1,70 @@
-function Get-YNABAccount {
+function Get-YnabAccount {
     <#
     .SYNOPSIS
-    Describe the function here
+        Returns the accounts for a budget.
     .DESCRIPTION
-    Describe the function in more detail
-    .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+        Returns a single account or list of accounts for a given budget.
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='List')]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
-        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
-        [String]$BudgetName,
+        # Name of the budget where the accounts exist.
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipelineByPropertyName)]
+        [String]$Budget,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
-        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
-        [String]$BudgetID,
+        # Account or list of accounts to get details of. 
+        [Parameter(Mandatory,
+                   Position=1,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Detail')]
+        [String[]]$Account,
 
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountName')]
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountName')]
-        [String[]]$AccountName,
-
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,AccountID')]
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,AccountID')]
-        [String[]]$AccountID,
-
-        [Parameter(ParameterSetName='List:BudgetName')]
-        [Parameter(ParameterSetName='List:BudgetID')]
-        [Switch]$List,
-
-        [Parameter(ParameterSetName='List:BudgetName')]
-        [Parameter(ParameterSetName='List:BudgetID')]
+        # Include closed accounts in the returned data. 
+        [Parameter(ParameterSetName='List')]
         [Switch]$IncludeClosed,
 
-        [Parameter(Mandatory=$true)]
-        $Token,
-
+        # Return the raw JSON data from the YNAB API.
         [Parameter(DontShow)]
-        [Switch]$NoParse
+        [Switch]$NoParse,
+        
+        # YNAB API token.
+        [Parameter(Mandatory,
+                   Position=2)]
+        $Token
     )
 
     begin {
-        Write-Verbose "Get-YNABAccount.ParameterSetName: $($PsCmdlet.ParameterSetName)"
-
+        Write-Verbose "Get-YnabAccount.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        
         # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
     }
 
     process {
-        # Get the budget IDs if the budget was specified by name
-        if ($BudgetName) {
-            Write-Verbose "Performing budget lookup to get BudgetID for $BudgetName"
-            $budgets = Get-YNABBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
-            Write-Verbose "Using BudgetID: $BudgetID"
-        }
+        # Get the budget and account data
+        $budgets = Get-YNABBudget -ListAll -Token $Token
+        $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
+        $accounts = Invoke-RestMethod "$uri/budgets/$budgetId/accounts" -Headers $header
 
-        # Get the account ID if the account was specified by name
-        if ($AccountName) {
-            $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
-            $AccountID = $AccountName.ForEach{
-                $name = $_
-                $accounts.Where{$_.Account -like $name}.AccountID
-            }
-            Write-Verbose "Using AccountID: $($AccountID -join ', ')"
-        }
-
-        switch -Wildcard ($PsCmdlet.ParameterSetName) {
-            'List*' {
-                $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts" -Headers $header
-                if ($response) {
+        switch ($PsCmdlet.ParameterSetName) {
+            'List' {
+                # Return the full list of accounts
+                if ($accounts) {
                     # By default only include open accounts, return closed accounts if -IncludeClosed is specified
-                    $data = $response.data.accounts.Where{
+                    $data = $accounts.data.accounts.Where{
                         if (!$IncludeClosed) {$_.closed -ne $true}
                         else {$_}
                     }
                     Get-ParsedAccountJson $data -NoParse:$NoParse
                 }
             }
-            'Detail*' {
-                # Return account details for each AccountID specified
-                $AccountID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$BudgetID/accounts/$_" -Headers $header
-                    if ($response) {
-                        Get-ParsedAccountJson $response.data.account -NoParse:$NoParse
+            'Detail' {
+                # Return account details for each account specified
+                foreach ($accountName in $Account) {
+                    $data = $accounts.data.accounts.Where{$_.Name -eq $accountName}
+                    if ($data) {
+                        Get-ParsedAccountJson $data -NoParse:$NoParse
                     }
                 }
             }
