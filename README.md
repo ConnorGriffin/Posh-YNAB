@@ -12,11 +12,16 @@
 * ~~Build ArgumentCompleters for all applicable parameters~~
 * Add comment-based help for all functions
 * ~~Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))~~
-* Add Pester tests
+* Add Pester tests (can I mock an API endpoint, or do my tests use live API calls?)
 * Automatically update FunctionsToExport and AliasesToExport on build
 * Merge all functions into a single .psm1 file on build
 * Add aliases for all functions (remove YNAB piece, so Get-YnabBudget is just Get-Budget)
 * Add support for transfer transactions
+* Custom formats for all data outputs (list and table!)
+* Change all *ID and *Name parameters to just the rootname (CategoryID is deleted, CategoryName becomes Category)
+* Add -NoParse to all data parsers
+* Get-YnabTransaction, implement a filter, or maybe Find-YnabTransaction
+* Pipeline idea/goal - store an already posted transaction as a preset: Get-YnabTransaction <transaction criteria> | Add-YnabTransactionPreset
 
 ## Endpoint Progress
 
@@ -27,28 +32,28 @@ Attempting to implement functionality for all endpoints listed [here](https://ap
 
 ### Budgets
 - ~~[GET] /budgets~~ Get-YnabBudget
-- [GET] /budgets/{budget_id} Get-YnabBudget -BudgetID <budget_id>
+- [GET] /budgets/{budget_id} Get-YnabBudget -Budget <budget_name>
 
 ### Accounts
 The Accounts for a budget.
 - ~~[GET] /budgets/{budget_id}/accounts~~ Get-YnabAccount
-- ~~[GET] /budgets/{budget_id}/accounts/{account_id}~~ Get-YnabAccount -AccountID <account_id>
+- ~~[GET] /budgets/{budget_id}/accounts/{account_id}~~ Get-YnabAccount -Account <account_name>
 
 ### Categories
 The Categories for a budget.
 - ~~[GET] /budgets/{budget_id}/categories~~ Get-YnabCategory
-- ~~[GET] /budgets/{budget_id}/categories/{category_id}~~ Get-YnabCategory -CategoryID <category_id>
+- ~~[GET] /budgets/{budget_id}/categories/{category_id}~~ Get-YnabCategory -Category <category_name>
 
 ### Payees
 The Payees for a budget.
 - ~~[GET] /budgets/{budget_id}/payees~~ Get-YnabPayee
-- ~~[GET] /budgets/{budget_id}/payees/{payee_id}~~ Get-YnabPayee -PayeeID <payee_id>
+- ~~[GET] /budgets/{budget_id}/payees/{payee_id}~~ Get-YnabPayee -Payee <payee_name>
 
 ### Payee Locations
 When you enter a transaction and specify a payee on the YNAB mobile apps, the GPS coordinates for that location are stored, with your permission, so that the next time you are in the same place (like the Grocery store) we can pre-populate nearby payees for you! It’s handy and saves you time. This resource makes these locations available. Locations will not be available for all payees.
 - ~~[GET] /budgets/{budget_id}/payee_locations~~ Get-YnabPayee -Location
 - [GET] /budgets/{budget_id}/payee_locations/{payee_location_id}
-- ~~[GET] /budgets/{budget_id}/payees/{payee_id}/payee_locations~~ Get-YnabPayee -PayeeID <payee_id> -Location
+- ~~[GET] /budgets/{budget_id}/payees/{payee_id}/payee_locations~~ Get-YnabPayee -Payee <payee_name> -Location
 
 ### Months
 Each budget contains one or more months, which is where To be Budgeted, Age of Money and Category (budgeted / activity / balances) amounts are available.
@@ -58,7 +63,7 @@ Each budget contains one or more months, which is where To be Budgeted, Age of M
 ### Transactions
 The Transactions for a budget.
 - [GET] /budgets/{budget_id}/transactions  
-- ~~**[POST] /budgets/{budget_id}/transactions**~~ Add-YnabTransaction -BudgetID <budget_id> -AccountID <account_id> etc..
+- ~~**[POST] /budgets/{budget_id}/transactions**~~ Add-YnabTransaction -Budget <budget_name> -Account <account_name> etc..
 - [POST] /budgets/{budget_id}/transactions/bulk
 - [GET] /budgets/{budget_id}/accounts/{account_id}/transactions
 - [GET] /budgets/{budget_id}/categories/{category_id}/transactions
