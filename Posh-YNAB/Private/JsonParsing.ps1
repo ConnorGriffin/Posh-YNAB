@@ -7,7 +7,8 @@ function Get-ParsedAccountJson {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline)]
+        [Parameter(Mandatory,
+                   ValueFromPipeline)]
         [Object[]]$Account,
         
         [Switch]$NoParse
@@ -55,50 +56,59 @@ function Get-ParsedAccountJson {
 function Get-ParsedPayeeJson {
     <#
     .SYNOPSIS
-    Describe the function here
-    .DESCRIPTION
-    Describe the function in more detail
-    .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
+        Converts the payee API data to a consistent format for use within the Posh-YNAB module.
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline)]
+        [Parameter(Mandatory,
+                   ValueFromPipeline)]
         [Object[]]$Payee,
 
-        [Parameter(ValueFromPipeline)]
-        [Object[]]$PayeeLocation
+        [Object[]]$PayeeLocation,
+
+        [Switch]$IncludeLocation,
+
+        [Switch]$NoParse
     )
 
-    begin {}
+    begin {
+        $parsedData = @()
+    }
 
     process {
-        $Payee.ForEach{
+        $parsedData += $Payee.ForEach{
             $payeeId = $_.id
 
             # Build an object of longitude/latidude data for the current payee
-            $location = $PayeeLocation.Where{$_.payee_id -eq $payeeId}.ForEach{
-                [PSCustomObject]@{
-                    Latitude = $_.latitude
-                    Longitude = $_.longitude
-                    Maps = "https://maps.google.com/maps?q=$($_.latitude),$($_.longitude)"
+            if ($IncludeLocation) {
+                $location = $PayeeLocation.Where{$_.payee_id -eq $payeeId}.ForEach{
+                    [PSCustomObject]@{
+                        Latitude = $_.latitude
+                        Longitude = $_.longitude
+                        Maps = "https://maps.google.com/maps?q=$($_.latitude),$($_.longitude)"
+                    }
                 }
+                $format = 'Ynab.PayeeWithLocation'
+            } else {
+                $format = 'Ynab.Payee'
             }
+            if (!$NoParse) {
+                $object = [PSCustomObject]@{
+                    Payee = $_.name
+                    Location = $location
+                    TransferAccountID = $_.transfer_account_id
+                    PayeeID = $payeeId
+                }
+                $object.PSObject.TypeNames.Insert(0,$format)
+                $object
+            } else {
+                $_
+            }
+        }
+    }
 
-            # Return the formatted payee data
-            [PSCustomObject]@{
-                Payee = $_.name
-                Location = $location
-                TransferAccountID = $_.transfer_account_id
-                PayeeID = $payeeId
-            }
-        } | Sort-Object Payee
+    end {
+        $parsedData | Sort-Object Payee
     }
 }
 

@@ -1,95 +1,56 @@
 function Get-YnabPayee {
-    <#
-    .SYNOPSIS
-    Describe the function here
-    .DESCRIPTION
-    Describe the function in more detail
-    .EXAMPLE
-    Give an example of how to use it
-    .EXAMPLE
-    Give another example of how to use it
-    .PARAMETER computername
-    The computer name to query. Just one.
-    .PARAMETER logname
-    The name of a file to write failed computer names to. Defaults to errors.txt.
-    #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='List')]
     param(
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,PayeeName')]
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,PayeeID')]
-        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetName')]
-        [String]$BudgetName,
+        [Parameter(Mandatory,
+                   ValueFromPipelineByPropertyName)]
+        [String]$Budget,
 
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,PayeeName')]
-        [Parameter(Mandatory=$true,ValueFromPipeline,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,PayeeID')]
-        [Parameter(Mandatory=$true,ParameterSetName='List:BudgetID')]
-        [String]$BudgetID,
+        [Parameter(Mandatory,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Detail')]
+        [String[]]$Payee,
 
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,PayeeName')]
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,PayeeName')]
-        [String[]]$PayeeName,
+        [Parameter(ParameterSetName='List')]
+        [Switch]$ListAll,
 
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetName,PayeeID')]
-        [Parameter(Mandatory=$true,ValueFromPipelineByPropertyName,ParameterSetName='Detail:BudgetID,PayeeID')]
-        [String[]]$PayeeID,
+        [Switch]$IncludeLocation,
 
-        [Parameter(ParameterSetName='List:BudgetName')]
-        [Parameter(ParameterSetName='List:BudgetID')]
-        [Switch]$List,
+        # Return the raw JSON data from the YNAB API.
+        [Parameter(DontShow)]
+        [Switch]$NoParse,
 
-        [Switch]$Location,
-
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory)]
         $Token
     )
 
     begin {
         Write-Verbose "Get-YnabPayee.ParameterSetName: $($PsCmdlet.ParameterSetName)"
-
-        # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
-
-        # Exclude Location in the data return if $Location is not used
-        if (!$Location) {$exclude = 'Location'}
     }
 
     process {
-        # Get the budget IDs if the budget was specified by name
-        if ($BudgetName) {
-            $budgets = Get-YnabBudget -List -Token $Token
-            $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
-        }
+        # Get the IDs of the budget and all payees
+        $budgets = Get-YnabBudget -ListAll -Token $Token
+        $budgetId = $budgets.Where{$_.Budget -eq $Budget}.BudgetID
+        $payees = Invoke-RestMethod "$uri/budgets/$BudgetID/payees" -Headers $header
 
-        # Get the account ID if the account was specified by name
-        if ($PayeeName) {
-            $payees = (Get-YnabPayee -List -BudgetID $BudgetID -Token $Token)
-            $PayeeID = $PayeeName.ForEach{
-                $name = $_
-                $payees.Where{$_.Payee -like $name}.PayeeID
-            }
-        }
-
-        switch -Wildcard ($PsCmdlet.ParameterSetName) {
-            'List*' {
-                $response = Invoke-RestMethod "$uri/budgets/$BudgetID/payees" -Headers $header
-                if ($response) {
+        if ($payees) {
+            switch ($PsCmdlet.ParameterSetName) {
+                'List' {
                     # Perform a payee location lookup if -Location is provided
-                    if ($Location) {
-                        $locations = Invoke-RestMethod "$uri/budgets/$BudgetID/payee_locations" -Headers $header
+                    if ($IncludeLocation) {
+                        $locations = Invoke-RestMethod "$uri/budgets/$budgetId/payee_locations" -Headers $header
                     }
-                    Get-ParsedPayeeJson $response.data.payees $locations.data.payee_locations | Select-Object * -ExcludeProperty $exclude
+                    Get-ParsedPayeeJson $payees.data.payees $locations.data.payee_locations -IncludeLocation:$IncludeLocation -NoParse:$NoParse
                 }
-            }
-            'Detail*' {
-                # Return account details for each AccountID specified
-                $PayeeID.ForEach{
-                    $response = Invoke-RestMethod "$uri/budgets/$BudgetID/payees/$_" -Headers $header
-                    if ($response) {
-                        # Perform a payee location lookup if -Location is provided
-                        if ($Location) {
-                            $locations = Invoke-RestMethod "$uri/budgets/$BudgetID/payees/$_/payee_locations" -Headers $header
+                'Detail' {
+                    foreach ($payeeName in $Payee) {
+                        $payeeData = $payees.data.payees.Where{$_.Name -eq $payeeName}
+                        # Perform a payee location lookup if -IncludeLocation is provided
+                        if ($IncludeLocation) {
+                            $locations = Invoke-RestMethod "$uri/budgets/$budgetId/payees/$_/payee_locations" -Headers $header
                         }
-                        Get-ParsedPayeeJson $response.data.payee $locations.data.payee_locations | Select-Object * -ExcludeProperty $exclude
+                        Get-ParsedPayeeJson $payeeData $locations.data.payee_locations -IncludeLocation:$IncludeLocation -NoParse:$NoParse
                     }
                 }
             }
