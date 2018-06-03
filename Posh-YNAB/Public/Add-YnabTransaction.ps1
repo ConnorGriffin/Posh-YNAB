@@ -17,143 +17,185 @@ function Add-YnabTransaction {
     .EXAMPLE
     Add-YnabTransaction -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
     Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset, but overrides the existing amount and memo, then stores the new details as 'Coffee Refund'.
-    .PARAMETER PresetName
-    The name of the preset to load (see: Add-YnabTransactionPreset).
-    .PARAMETER BudgetName
-    The name of the budget to add the transaction to.
-    .PARAMETER BudgetID
-    The ID of the budget to add the transaction to.
-    Takes priority over BudgetName if both are provided.
-    .PARAMETER AccountName
-    The name of the account to add the transaction to.
-    .PARAMETER AccountID
-    The ID of the account to add the transaction to.
-    Takes priority over AccountName if both are provided.
-    .PARAMETER PayeeName
-    The name of the payee to add the transaction to.
-    .PARAMETER PayeeID
-    The ID of the payee to add the transaction to.
-    Takes priority over PayeeName if both are provided.
-    .PARAMETER CategoryName
-    The name of the category to add the transaction to.
-    .PARAMETER CategoryID
-    The ID of the category to add the transaction to.
-    Takes priority over CategoryName if both are provided.
-    .PARAMETER Memo
-    Memo for the transaction.
-    .PARAMETER Outflow
-    Outflow amount for the transaction.
-    Uses absolute value, so a positive or negative number can be provided.
-    .PARAMETER Inflow
-    Inflow amount for the transaction.
-    Uses absolute value, so a positive or negative number can be provided.
-    .PARAMETER Amount
-    Amount for the transaction.
-    Negative = Outflow, Positive = Inflow
-    .PARAMETER Date
-    Date for the trarnsaction.
-    Defaults to today.
-    .PARAMETER Token
-    API token used to post the transaction.
-    .PARAMETER FlagColor
-    Flag color for the transaction.
-    .PARAMETER Cleared
-    If specified the transaction will be marked as CLeared.
-    .PARAMETER Approved
-    If specified the transaction will be marked as Approved.
-    Defaults to $true.
-    .PARAMETER StoreAs
-    PresetName to save the transaction as, allowing the transaction details to be re-used with the PresetName parameter (see: Add-YnabTransactionPreset).
     #>
-    [CmdletBinding(DefaultParameterSetName='Any')]
+    [CmdletBinding(DefaultParameterSetName='NoPreset,Outflow')]
     param(
-        [Parameter(Position=0,Mandatory=$false,ParameterSetName='Any')]
-        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset')]
-        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Outflow')]
-        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Inflow')]
-        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Preset,Amount')]
-        [Alias('Preset')]
-        [String]$PresetName,
+        # The name of the preset to load (see: Add-YnabTransactionPreset).
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset')]
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=0,
+                   ValueFromPipeline,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Amount')]
+        [String]$Preset,
 
-        [Parameter(Position=10)]
-        [Alias('Budget')]
-        [String]$BudgetName,
+        # The name of the budget to add the transaction to.
+        [Parameter(Position=1,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset')]
+        [Parameter(Mandatory,
+                   Position=1,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=1,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=1,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Amount')]
+        [String]$Budget,
 
-        [Parameter(Position=11,DontShow)]
-        [String]$BudgetID,
+        # The name of the account to add the transaction to.
+        [Parameter(Position=2,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset')]
+        [Parameter(Mandatory,
+                   Position=2,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=2,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=2,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Amount')]
+        [String]$Account,
 
-        [Parameter(Position=20)]
-        [Alias('Account')]
-        [String]$AccountName,
+        # The name of the payee to add the transaction to.
+        [Parameter(Position=3,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset')]
+        [Parameter(Mandatory,
+                   Position=3,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=3,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=3,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Amount')]
+        [String]$Payee,
 
-        [Parameter(Position=21,DontShow)]
-        [String]$AccountID,
+        # The name of the category to add the transaction to.
+        [Parameter(Position=4,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset')]
+        [Parameter(Mandatory,
+                   Position=4,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=4,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=4,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Amount')]
+        [String]$Category,
 
-        [Parameter(Position=30)]
-        [Alias('Payee')]
-        [String]$PayeeName,
-
-        [Parameter(Position=31,DontShow)]
-        [String]$PayeeID,
-
-        [Parameter(Position=40)]
-        [Alias('Category')]
-        [String]$CategoryName,
-
-        [Parameter(Position=41,DontShow)]
-        [String]$CategoryID,
-
-        [Parameter(Position=50)]
+        # Memo for the transaction.
+        [Parameter(Position=5,
+                   ValueFromPipelineByPropertyName)]
         [String]$Memo,
 
-        [Parameter(Position=60,Mandatory=$false,ParameterSetName='Any')]
-        [Parameter(Position=60,Mandatory=$false,ParameterSetName='Preset')]
-        [Parameter(Position=60,Mandatory=$true,ParameterSetName='Preset,Outflow')]
+        # Outflow amount for the transaction.
+        # Uses absolute value, so a positive or negative number can be provided.
+        [Parameter(Mandatory,
+                   Position=6,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Outflow')]
+        [Parameter(Mandatory,
+                   Position=6,
+                   ParameterSetName='NoPreset,Outflow')]
         [Double]$Outflow,
 
-
-        [Parameter(Position=61,Mandatory=$false,ParameterSetName='Any')]
-        [Parameter(Position=61,Mandatory=$false,ParameterSetName='Preset')]
-        [Parameter(Position=61,Mandatory=$true,ParameterSetName='Preset,Inflow')]
+        # Inflow amount for the transaction.
+        # Uses absolute value, so a positive or negative number can be provided.
+        [Parameter(Mandatory,
+                   Position=6,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Inflow')]
+        [Parameter(Mandatory,
+                   Position=6,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Inflow')]
         [Double]$Inflow,
 
-        [Parameter(Position=62,Mandatory=$false,ParameterSetName='Any')]
-        [Parameter(Position=62,Mandatory=$false,ParameterSetName='Preset')]
-        [Parameter(Position=62,Mandatory=$true,ParameterSetName='Preset,Amount')]
+        # Amount for the transaction. Negative = Outflow, Positive = Inflow
+        [Parameter(Mandatory,
+                   Position=6,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Preset,Amount')]
+        [Parameter(Mandatory,
+                   Position=6,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='NoPreset,Amount')]
         [Double]$Amount,
 
-        [Parameter(Position=70)]
+        # Date for the trarnsaction. 
+        # Defaults to today.
+        [Parameter(Position=7,
+                   ValueFromPipelineByPropertyName)]
         [Datetime]$Date = (Get-Date),
 
-        [Parameter(Position=80)]
+        # YNAB API token.
+        [Parameter(Position=8,
+                   ValueFromPipelineByPropertyName)]
         $Token,
 
-        [Parameter(Position=90)]
+        # Flag color for the transaction.
+        [Parameter(Position=9,
+                   ValueFromPipelineByPropertyName)]
         [ValidateSet('Red','Orange','Yellow','Green','Blue','Purple')]
         [String]$FlagColor,
 
-        [Parameter(Position=100)]
+        # If specified the transaction will be marked as CLeared.
+        [Parameter(Position=10,
+                   ValueFromPipelineByPropertyName)]
         [Switch]$Cleared,
 
-        [Parameter(Position=110)]
+        # If specified the transaction will be marked as Approved.
+        # Defaults to $true.
+        [Parameter(Position=11,
+                   ValueFromPipelineByPropertyName)]
         [Bool]$Approved=$true,
 
-        [Parameter(Position=120)]
+        # Preset name to save the transaction as, allowing the transaction details to be re-used with the Preset parameter (see: Add-YnabTransactionPreset).
+        [Parameter(Position=12,
+                   ValueFromPipelineByPropertyName)]
         [String]$StoreAs
     )
 
     begin {
-        Write-Verbose "Add-YnabTransaction.ParameterSetName: $($PsCmdlet.ParameterSetName)"
-
-        # Set the default header value for Invoke-RestMethod
         if ($Token) {$header = Get-Header $Token}
     }
 
     process {
         # Load presets and perform a recursive run if a $Preset is specified
-        if ($PresetName) {
-            Write-Verbose "Using preset: $PresetName"
-            $presetParams = (Get-YnabTransactionPreset $PresetName).Value
+        if ($Preset) {
+            $presetParams = (Get-YnabTransactionPreset $Preset).Value
 
             # Override preset data with values for any provided named parameters
             if ($BudgetName) {$presetParams.BudgetName = $BudgetName}
