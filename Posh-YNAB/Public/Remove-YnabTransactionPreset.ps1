@@ -1,17 +1,17 @@
-function Remove-YNABTransactionPreset {
+function Remove-YnabTransactionPreset {
     <#
     .SYNOPSIS
     Remove transaction presets.
     .DESCRIPTION
     Remove transaction presets from the preset file.
     .EXAMPLE
-    Remove-YNABTransactionPreset -PresetName 'Coffee'
+    Remove-YnabTransactionPreset -PresetName 'Coffee'
     Remove the Coffee preset.
     .EXAMPLE
-    Remove-YNABTransactionPreset -PresetName 'Coffee','Soda'
+    Remove-YnabTransactionPreset -PresetName 'Coffee','Soda'
     Remove the Coffee and Soda presets.
     .EXAMPLE
-    Remove-YNABTransactionPreset -PresetName '*'
+    Remove-YnabTransactionPreset -PresetName '*'
     Remove all presets.
     .PARAMETER PresetName
     The name of the preset to remove, accepts a string or array of strings. Supports wildcards.

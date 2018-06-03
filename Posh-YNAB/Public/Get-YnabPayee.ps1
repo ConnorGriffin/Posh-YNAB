@@ -1,4 +1,4 @@
-function Get-YNABPayee {
+function Get-YnabPayee {
     <#
     .SYNOPSIS
     Describe the function here
@@ -44,7 +44,7 @@ function Get-YNABPayee {
     )
 
     begin {
-        Write-Verbose "Get-YNABPayee.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Get-YnabPayee.ParameterSetName: $($PsCmdlet.ParameterSetName)"
 
         # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
@@ -56,13 +56,13 @@ function Get-YNABPayee {
     process {
         # Get the budget IDs if the budget was specified by name
         if ($BudgetName) {
-            $budgets = Get-YNABBudget -List -Token $Token
+            $budgets = Get-YnabBudget -List -Token $Token
             $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
         }
 
         # Get the account ID if the account was specified by name
         if ($PayeeName) {
-            $payees = (Get-YNABPayee -List -BudgetID $BudgetID -Token $Token)
+            $payees = (Get-YnabPayee -List -BudgetID $BudgetID -Token $Token)
             $PayeeID = $PayeeName.ForEach{
                 $name = $_
                 $payees.Where{$_.Payee -like $name}.PayeeID

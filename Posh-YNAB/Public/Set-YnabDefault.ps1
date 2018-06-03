@@ -1,4 +1,4 @@
-function Set-YNABDefault {
+function Set-YnabDefault {
     <#
     .SYNOPSIS
     Describe the function here
@@ -26,7 +26,7 @@ function Set-YNABDefault {
     )
 
     begin {
-        Write-Verbose "Set-YNABDefaults.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Set-YnabDefault.ParameterSetName: $($PsCmdlet.ParameterSetName)"
 
         # Encrypt the token if it is of type String
         if ($Token.GetType().Name -eq 'String') {

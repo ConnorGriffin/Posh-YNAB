@@ -1,13 +1,13 @@
-function Add-YNABTransactionPreset {
+function Add-YnabTransactionPreset {
     <#
     .SYNOPSIS
-    Add a transaction preset to be used in Add-YNABTransaction.
+    Add a transaction preset to be used in Add-YnabTransaction.
     .DESCRIPTION
-    Add a transaction preset to be used in Add-YNABTransaction.
+    Add a transaction preset to be used in Add-YnabTransaction.
     Presets are stored in $ENV:AppData\PSModules\Posh-YNAB\Presets.xml
     .EXAMPLE
-    Add-YNABTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50
-    Adds a transaction preset called Coffee that can be used in Add-YNABTransaction with Add-YNABTransaction -PresetName 'Coffee'
+    Add-YnabTransactionPreset -PresetName 'Coffee' -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50
+    Adds a transaction preset called Coffee that can be used in Add-YnabTransaction with Add-YnabTransaction -PresetName 'Coffee'
     .PARAMETER PresetName
     The name of the preset to remove, accepts a string or array of strings. Supports wildcards.
     .PARAMETER BudgetName
@@ -122,7 +122,7 @@ function Add-YNABTransactionPreset {
     )
 
     begin {
-        Write-Verbose "New-YNABTransactionPreset.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "New-YnabTransactionPreset.ParameterSetName: $($PsCmdlet.ParameterSetName)"
 
         # Encrypt the token if it is of type String, replace $PSBoundParameters.Token with the SecureString version
         $data = $PSBoundParameters

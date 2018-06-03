@@ -39,7 +39,7 @@ function Get-ParsedAccountJson {
                     UnclearedBalance = ([double]$_.uncleared_balance / 1000)
                     AccountID = $_.id
                 }
-                $object.PSObject.TypeNames.Insert(0,'YNAB.Account')
+                $object.PSObject.TypeNames.Insert(0,'Ynab.Account')
                 $object
             } else {
                 $_

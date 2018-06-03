@@ -1,4 +1,4 @@
-function Get-YNABUser {
+function Get-YnabUser {
     <#
     .SYNOPSIS
     Describe the function here

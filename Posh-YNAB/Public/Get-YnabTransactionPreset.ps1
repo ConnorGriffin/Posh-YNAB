@@ -1,17 +1,17 @@
-function Get-YNABTransactionPreset {
+function Get-YnabTransactionPreset {
     <#
     .SYNOPSIS
     List transaction presets.
     .DESCRIPTION
     List transaction presets from the preset file.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName 'Coffee'
+    Get-YnabTransactionPreset -PresetName 'Coffee'
     Get the Coffee preset.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName 'Coffee','Soda'
+    Get-YnabTransactionPreset -PresetName 'Coffee','Soda'
     Get the Coffee and Soda presets.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName '*'
+    Get-YnabTransactionPreset -PresetName '*'
     Get all presets
     .PARAMETER PresetName
     The name of the preset to list, accepts a string or array of strings. Supports wildcards.

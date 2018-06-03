@@ -1,24 +1,24 @@
-function Add-YNABTransaction {
+function Add-YnabTransaction {
     <#
     .SYNOPSIS
     Adds a transaction to YNAB.
     .DESCRIPTION
     Adds a transaction to YNAB.
     .EXAMPLE
-    Add-YNABTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
+    Add-YnabTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
     .EXAMPLE
-    Add-YNABTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
+    Add-YnabTransaction -BudgetName 'TestBudget' -AccountName 'Checking' -CategoryName 'Food' -Memo 'Coffee' -Outflow 3.50 -Token $ynabToken -StoreAs 'Coffee'
     Adds a transaction to TestBudget with the specified account, category, memo, and outflow.
-    Stores the transaction as a preset called 'Coffee' (see: Add-YNABTransactionPreset).
+    Stores the transaction as a preset called 'Coffee' (see: Add-YnabTransactionPreset).
     .EXAMPLE
-    Add-YNABTransaction -PresetName 'Coffee'
-    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset (see: Get-YNABTransactionPreset).
+    Add-YnabTransaction -PresetName 'Coffee'
+    Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset (see: Get-YnabTransactionPreset).
     .EXAMPLE
-    Add-YNABTransaction -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
+    Add-YnabTransaction -PresetName 'Coffee' -Inflow 3.50 -Memo 'Refund' -StoreAs 'Coffee Refund'
     Adds a transaction to YNAB using the settings from the 'Coffee' transaction preset, but overrides the existing amount and memo, then stores the new details as 'Coffee Refund'.
     .PARAMETER PresetName
-    The name of the preset to load (see: Add-YNABTransactionPreset).
+    The name of the preset to load (see: Add-YnabTransactionPreset).
     .PARAMETER BudgetName
     The name of the budget to add the transaction to.
     .PARAMETER BudgetID
@@ -63,7 +63,7 @@ function Add-YNABTransaction {
     If specified the transaction will be marked as Approved.
     Defaults to $true.
     .PARAMETER StoreAs
-    PresetName to save the transaction as, allowing the transaction details to be re-used with the PresetName parameter (see: Add-YNABTransactionPreset).
+    PresetName to save the transaction as, allowing the transaction details to be re-used with the PresetName parameter (see: Add-YnabTransactionPreset).
     #>
     [CmdletBinding(DefaultParameterSetName='Any')]
     param(
@@ -143,7 +143,7 @@ function Add-YNABTransaction {
     )
 
     begin {
-        Write-Verbose "Add-YNABTransaction.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Add-YnabTransaction.ParameterSetName: $($PsCmdlet.ParameterSetName)"
 
         # Set the default header value for Invoke-RestMethod
         if ($Token) {$header = Get-Header $Token}
@@ -153,7 +153,7 @@ function Add-YNABTransaction {
         # Load presets and perform a recursive run if a $Preset is specified
         if ($PresetName) {
             Write-Verbose "Using preset: $PresetName"
-            $presetParams = (Get-YNABTransactionPreset $PresetName).Value
+            $presetParams = (Get-YnabTransactionPreset $PresetName).Value
 
             # Override preset data with values for any provided named parameters
             if ($BudgetName) {$presetParams.BudgetName = $BudgetName}
@@ -185,11 +185,11 @@ function Add-YNABTransaction {
             if ($Approved) {$presetParams.Approved = $Approved}
             if ($StoreAs) {$presetParams.StoreAs = $StoreAs}
 
-            Add-YNABTransaction @presetParams
+            Add-YnabTransaction @presetParams
         } else {
             # Get the budget IDs if the budget was specified by name
             if (!$BudgetID) {
-                $budgets = Get-YNABBudget -List -Token $Token
+                $budgets = Get-YnabBudget -List -Token $Token
                 if (!$BudgetName) {
                     $BudgetName = Read-Host 'BudgetName'
                 }
@@ -199,7 +199,7 @@ function Add-YNABTransaction {
 
             # Get the account ID if the account was specified by name
             if (!$AccountID) {
-                $accounts = Get-YNABAccount -List -BudgetID $BudgetID -Token $Token
+                $accounts = Get-YnabAccount -List -BudgetID $BudgetID -Token $Token
                 if (!$AccountName) {
                     $AccountName = Read-Host 'AccountName'
                 }
@@ -209,7 +209,7 @@ function Add-YNABTransaction {
 
             # Get the category ID if the category was specified by name
             if (!$CategoryID) {
-                $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
+                $categories = (Get-YnabCategory -List -BudgetID $BudgetID -Token $Token).Categories
                 if (!$CategoryName) {
                     $CategoryName = Read-Host 'CategoryName'
                 }
@@ -271,7 +271,7 @@ function Add-YNABTransaction {
                 $params.Add('AccountID',$AccountID)
                 $params.Add('CategoryID',$CategoryID)
 
-                Add-YNABTransactionPreset -PresetName $StoreAs @params
+                Add-YnabTransactionPreset -PresetName $StoreAs @params
             }
         }
     }

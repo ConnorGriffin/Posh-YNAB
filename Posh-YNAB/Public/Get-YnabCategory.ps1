@@ -1,4 +1,4 @@
-function Get-YNABCategory {
+function Get-YnabCategory {
     <#
     .SYNOPSIS
     Describe the function here
@@ -46,7 +46,7 @@ function Get-YNABCategory {
     )
 
     begin {
-        Write-Verbose "Get-YNABCategory.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Get-YnabCategory.ParameterSetName: $($PsCmdlet.ParameterSetName)"
         
         # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
@@ -55,13 +55,13 @@ function Get-YNABCategory {
     process {
         # Get the budget IDs if the budget was specified by name
         if ($BudgetName) {
-            $budgets = Get-YNABBudget -List -Token $Token
+            $budgets = Get-YnabBudget -List -Token $Token
             $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
         }
 
         # Get the account ID if the account was specified by name
         if ($CategoryName) {
-            $categories = (Get-YNABCategory -List -BudgetID $BudgetID -Token $Token).Categories
+            $categories = (Get-YnabCategory -List -BudgetID $BudgetID -Token $Token).Categories
             $CategoryID = $CategoryName.ForEach{
                 $name = $_
                 $categories.Where{$_.Category -like $name}.CategoryID

@@ -15,7 +15,7 @@ $budgetName = @{
         # Only continue trying to complete if a token was provided
         if ($token) {
             # Get a list of all budgets
-            $budgets = Get-YNABBudget -Token $token -List | Sort-Object Name
+            $budgets = Get-YnabBudget -Token $token -List | Sort-Object Name
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -49,7 +49,7 @@ $budgetId = @{
         # Only continue trying to complete if a token was provided
         if ($token) {
             # Get a list of all budgets
-            $budgets = Get-YNABBudget -Token $token -List | Sort-Object BudgetID
+            $budgets = Get-YnabBudget -Token $token -List | Sort-Object BudgetID
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -90,7 +90,7 @@ $accountName = @{
         }
 
         # Build a parameter object for splatting
-        $params = @{List = $true}
+        $params = @{}
         if ($token) {$params.Token = $token}
         # Prioritize ID over name, only include one
         if ($budgetId) {$params.BudgetID = $budgetId}
@@ -99,7 +99,7 @@ $accountName = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $accounts = Get-YNABAccount @params | Sort-Object Name
+            $accounts = Get-YnabAccount @params | Sort-Object Name
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -140,7 +140,7 @@ $accountId = @{
         }
 
         # Build a parameter object for splatting
-        $params = @{List = $true}
+        $params = @{}
         if ($token) {$params.Token = $token}
         # Prioritize ID over name, only include one
         if ($budgetId) {$params.BudgetID = $budgetId}
@@ -149,7 +149,7 @@ $accountId = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $accounts = Get-YNABAccount @params | Sort-Object AccountID
+            $accounts = Get-YnabAccount @params | Sort-Object AccountID
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -199,7 +199,7 @@ $categoryName = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $categories = (Get-YNABCategory @params).Categories | Sort-Object Category
+            $categories = (Get-YnabCategory @params).Categories | Sort-Object Category
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -249,7 +249,7 @@ $categoryId = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $categories = (Get-YNABCategory @params).Categories | Sort-Object Category
+            $categories = (Get-YnabCategory @params).Categories | Sort-Object Category
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -299,7 +299,7 @@ $payeeName = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $payees = (Get-YNABPayee @params) | Sort-Object Payee
+            $payees = (Get-YnabPayee @params) | Sort-Object Payee
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -349,7 +349,7 @@ $payeeId = @{
         # Only continue trying to complete if a token was provided
         if ($token -and ($budgetId -or $budgetName)) {
             # Get a list of all accounts
-            $payees = (Get-YNABPayee @params) | Sort-Object PayeeID
+            $payees = (Get-YnabPayee @params) | Sort-Object PayeeID
 
             # Trim quotes from the $wordToComplete
             $wordMatch = $wordToComplete.Trim("`"`'")
@@ -373,7 +373,7 @@ $presetName = @{
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
         # Get a list of all accounts
-        $presets = (Get-YNABTransactionPreset -List).GetEnumerator() | Sort-Object Name
+        $presets = (Get-YnabTransactionPreset -List).GetEnumerator() | Sort-Object Name
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")

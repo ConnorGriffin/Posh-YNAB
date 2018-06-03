@@ -1,4 +1,4 @@
-function Get-YNABBudget {
+function Get-YnabBudget {
     <#
     .SYNOPSIS
     Describe the function here
@@ -29,7 +29,7 @@ function Get-YNABBudget {
     )
 
     begin {
-        Write-Verbose "Get-YNABBudget.ParameterSetName: $($PsCmdlet.ParameterSetName)"
+        Write-Verbose "Get-YnabBudget.ParameterSetName: $($PsCmdlet.ParameterSetName)"
         
         # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
@@ -38,7 +38,7 @@ function Get-YNABBudget {
     process {
         # If a name is provided, perform a recursive lookup, filtering by name and then looking up by ID
         if ($BudgetName) {
-            $budgets = Get-YNABBudget -Token $Token -List
+            $budgets = Get-YnabBudget -Token $Token -List
             $budgetId = $budgets.Where{$_.Budget -eq $BudgetName}.BudgetID
         }
 
