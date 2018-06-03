@@ -63,22 +63,22 @@ Description = 'PowerShell Implementation for YNAB API'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-FormatsToProcess = @('Formats\YNAB.Account.ps1xml')
+FormatsToProcess = @('Formats\Ynab.Account.ps1xml')
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Add-YNABTransaction',
-                      'Add-YNABTransactionPreset',
-                      'Get-YNABTransactionPreset',
-                      'Remove-YNABTransactionPreset',
-                      'Get-YNABAccount',
-                      'Get-YNABBudget',
-                      'Get-YNABCategory',
-                      'Get-YNABPayee',
-                      'Get-YNABUser',
-                      'Set-YNABDefault')
+FunctionsToExport = @('Add-YnabTransaction',
+                      'Add-YnabTransactionPreset',
+                      'Get-YnabTransactionPreset',
+                      'Remove-YnabTransactionPreset',
+                      'Get-YnabAccount',
+                      'Get-YnabBudget',
+                      'Get-YnabCategory',
+                      'Get-YnabPayee',
+                      'Get-YnabUser',
+                      'Set-YnabDefault')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 #CmdletsToExport = @('*')
