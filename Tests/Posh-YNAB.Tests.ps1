@@ -6,6 +6,7 @@ $testAccount = 'Test Account'
 $testPayee = 'Test Payee'
 $testCategory = 'Test Category'
 $testMemo = 'Test Memo'
+$testOutflow = 10.25
 $testToken = 'Test Token'
 $testFlagColor = 'Red'
 
