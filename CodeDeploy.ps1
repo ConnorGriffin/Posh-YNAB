@@ -9,8 +9,8 @@ Switch ($Phase) {
         # https://github.com/rubrikinc/PowerShell-Module/blob/master/tests/install.ps1
         [string[]]$PowerShellModules = @("Pester", "posh-git", "platyPS", "InvokeBuild")
         [string[]]$PackageProviders = @('NuGet', 'PowerShellGet')
-        [string[]]$ChocolateyPackages = @('nodejs', 'calibre')
-        [string[]]$NodeModules = @('gitbook-cli', 'gitbook-summary')
+        #[string[]]$ChocolateyPackages = @('nodejs', 'calibre')
+        #[string[]]$NodeModules = @('gitbook-cli', 'gitbook-summary')
 
         # Line break for readability in AppVeyor console
         Write-Host -Object ''
