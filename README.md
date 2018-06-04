@@ -6,7 +6,7 @@ This module is available on the [PowerShell Gallery](https://www.powershellgalle
 ## Initial setup
 
 ### Installing and loading the module
-```
+```powershell
 # Install the module (if you have PowerShell 5, or the PowerShellGet module).
 Install-Module Posh-YNAB -Scope CurrentUser
 
@@ -30,7 +30,7 @@ Your budget name and API token can be stored as defaults that load when the modu
 as a SecureString, which can only be decrypted by the user and computer that encrypted it. The Token cannot be decrypted by any other user on your computer, or any user 
 (including yourself) on any other computer. 
 
-```
+```powershell
 # Set your default Budget and Token (example token generated randomly)
 Set-YnabDefault -Budget "Test Budget" -Token 'c63d41ca37bc03e4837d2e7cacc60ee9ac63432f3bbf2f3deced75449afb5185' 
 
@@ -46,7 +46,7 @@ Some things to note:
 - This module is IN PROGRESS and does not support all API features, though it does support a good amount.
 
 ### Posting a transaction
-```
+```powershell
 # Add a transaction
 Add-YnabTransaction -Budget 'Test Budget' -Account 'Checking' -Payee 'School' -Category 'Education' -Memo 'Enrollment Fee' -Outflow 500
 
