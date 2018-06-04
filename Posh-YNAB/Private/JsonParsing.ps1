@@ -263,28 +263,65 @@ function Get-ParsedCategoryJson {
         [Parameter(Mandatory=$true,ValueFromPipeline)]
         [Object[]]$Category,
         [Switch]$List,
-        [Switch]$IncludeHidden
+        [Switch]$IncludeHidden,
+        [Switch]$NoParse
     )
 
-    begin {}
+    begin {
+        $parsedData = @()
+    }
 
     process {
         if ($List) {
-            $Category.Where{
-                # Get rid of hidden category groups unless $IncludeHidden is $true
+            # Get rid of hidden category groups unless $IncludeHidden is $true
+            $includedCategories = $Category.Where{
                 if (!$IncludeHidden) {
                     $_.hidden -ne $true -and $_.name -ne 'Internal Master Category'
                 } else {
                     $_.name -ne 'Internal Master Category'
                 }
-            }.ForEach{
-                # Build an object of subcategories for each group
-                $categories = $_.categories.Where{
-                    # Get rid of hidden categories unless $IncludeHidden is $true
-                    if (!$IncludeHidden) {
-                        $_.hidden -ne $true
-                    } else {$true}
-                }.ForEach{
+            }
+            
+            if (!$NoParse) {
+                # Parse the data if -NoParse is not specified
+                $parsedData += $includedCategories.ForEach{
+                    # Build an object of subcategories for each group
+                    $categories = $_.categories.Where{
+                        # Get rid of hidden categories unless $IncludeHidden is $true
+                        if (!$IncludeHidden) {
+                            $_.hidden -ne $true
+                        } else {$true}
+                    }.ForEach{
+                        [PSCustomObject]@{
+                            Category = $_.name
+                            Note = $_.note
+                            Budgeted = ([double]$_.budgeted / 1000)
+                            Activity = ([double]$_.activity / 1000)
+                            Balance = ([double]$_.balance / 1000)
+                            Hidden = $_.hidden
+                            CategoryID = $_.id
+                        }
+                    } | Sort-Object Category
+
+                    # Don't return the category group if there aren't any categories
+                    if ($categories) {
+                        [PSCustomObject]@{
+                            CategoryGroup = $_.name
+                            Hidden = $_.hidden
+                            Categories = $categories
+                            CategoryGroupID = $_.id
+                        }
+                    }
+                } | Sort-Object CategoryGroup
+            } else {
+                # Return unparsed data if -NoParse is specified
+                $parsedData += $includedCategories.ForEach{$_}
+            }
+        } else {
+            # If list isn't specified, parse as a single category
+            if (!$NoParse) {
+                $parsedData += $Category.ForEach{
+                    # Return the formatted data
                     [PSCustomObject]@{
                         Category = $_.name
                         Note = $_.note
@@ -295,30 +332,14 @@ function Get-ParsedCategoryJson {
                         CategoryID = $_.id
                     }
                 } | Sort-Object Category
-
-                # Don't return the category group if there aren't any categories
-                if ($categories) {
-                    [PSCustomObject]@{
-                        CategoryGroup = $_.name
-                        Hidden = $_.hidden
-                        Categories = $categories
-                        CategoryGroupID = $_.id
-                    }
-                }
-            } | Sort-Object CategoryGroup
-        } else {
-            $Category.ForEach{
-                # Return the formatted data
-                [PSCustomObject]@{
-                    Category = $_.name
-                    Note = $_.note
-                    Budgeted = ([double]$_.budgeted / 1000)
-                    Activity = ([double]$_.activity / 1000)
-                    Balance = ([double]$_.balance / 1000)
-                    Hidden = $_.hidden
-                    CategoryID = $_.id
-                }
-            } | Sort-Object Category
+            } else {
+                # Return unparsed data
+                $parsedData += $Category.ForEach{$_}
+            }
         }
+    }
+
+    end {
+        $parsedData
     }
 }

@@ -32,6 +32,10 @@ function Get-YnabCategory {
                    ParameterSetName='List')]
         [Switch]$IncludeHidden,
 
+        # Return the raw JSON data from the YNAB API.
+        [Parameter(DontShow)]
+        [Switch]$NoParse,
+
         [Parameter(Mandatory,
                    ValueFromPipelineByPropertyName)]
         $Token
@@ -45,22 +49,20 @@ function Get-YnabCategory {
         # Get the budget and category data
         $budgets = [Array](Get-YnabBudget -ListAll -Token $Token)
         $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
+        $categories = Invoke-RestMethod "$uri/budgets/$budgetId/categories" -Headers $header
 
         switch ($PsCmdlet.ParameterSetName) {
             'List' {
-                $categories = Invoke-RestMethod "$uri/budgets/$budgetId/categories" -Headers $header
                 # Return the full list of categories by group
                 if ($categories) {
-                    Get-ParsedCategoryJson $categories.data.category_groups -List -IncludeHidden:$IncludeHidden
+                    Get-ParsedCategoryJson $categories.data.category_groups -List -IncludeHidden:$IncludeHidden -NoParse:$NoParse
                 }
             }
             'Detail' {
-                $categories = [Array]((Get-YnabCategory -Budget $Budget -ListAll -IncludeHidden:$IncludeHidden -Token $Token).Categories)
                 # Return category details for each category specified
                 foreach ($categoryName in $Category) {
-                    $categoryId = $categories.Where{$_.Category -like $categoryName}.CategoryID
-                    $response = Invoke-RestMethod "$uri/budgets/$budgetId/categories/$categoryId" -Headers $header
-                    Get-ParsedCategoryJson $response.data.category
+                    $data = ([Array]$categories.data.category_groups.categories).Where{$_.Name -eq $categoryName}
+                    Get-ParsedCategoryJson $data -NoParse:$NoParse
                 }
             }
         }
