@@ -5,9 +5,9 @@ Switch ($Phase) {
     'Install' {
     }
     'Build' {
-        $env:PSModulePath
-        $localModPath = $env:PSModulePath.Split(';')[0]
-        Copy-Item -Recurse ./Posh-YNAB/ $localModPath
-        Publish-Module -Name 'Posh-YNAB' -NugetApiKey $ENV:PSGalleryAPIKey
+        $localModPath = $env:PSModulePath.Split(':')[0]
+        #Copy-Item -Recurse ./Posh-YNAB/ $localModPath
+        #Publish-Module -Name 'Posh-YNAB' -NugetApiKey $ENV:PSGalleryAPIKey
+        Publish-Module -Path ./Posh-YNAB/ -NugetApiKey $ENV:PSGalleryAPIKey
     }
 }
