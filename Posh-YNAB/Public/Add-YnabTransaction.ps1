@@ -41,7 +41,7 @@ function Add-YnabTransaction {
                    ValueFromPipeline,
                    ValueFromPipelineByPropertyName,
                    ParameterSetName='Preset,Amount')]
-        [String]$Preset,
+        [String[]]$Preset,
 
         # The name of the budget to add the transaction to.
         [Parameter(Position=1,
@@ -128,6 +128,7 @@ function Add-YnabTransaction {
                    ParameterSetName='Preset,Outflow')]
         [Parameter(Mandatory,
                    Position=6,
+                   ValueFromPipelineByPropertyName,
                    ParameterSetName='NoPreset,Outflow')]
         [Double]$Outflow,
 
@@ -195,55 +196,60 @@ function Add-YnabTransaction {
     process {
         # Load presets and perform a recursive run if a $Preset is specified
         if ($Preset) {
-            $presetParams = (Get-YnabTransactionPreset $Preset).Value
+            foreach ($presetName in $Preset) {
+                $presetParams = (Get-YnabTransactionPreset $presetName).Value
+                if (!$presetParams) {
+                    Write-Error "Preset $presetName could not be found in $profilePath\Presets.xml"
+                } else {
+                    # Override preset data with values for any provided named parameters
+                    if ($Budget) {$presetParams.Budget = $Budget}
+                    if ($Account) {$presetParams.Account = $Account}
+                    if ($Payee) {$presetParams.Payee = $Payee}
+                    if ($Category) {$presetParams.Category = $Category}
+                    if ($Memo) {$presetParams.Memo = $Memo}
+                    if ($Outflow) {
+                        $presetParams.Remove('Inflow')
+                        $presetParams.Remove('Amount')
+                        $presetParams.Outflow = $Outflow
+                    } elseif ($Inflow) {
+                        $presetParams.Remove('Outflow')
+                        $presetParams.Remove('Amount')
+                        $presetParams.Inflow = $Inflow
+                    } elseif ($Amount) {
+                        $presetParams.Remove('Inflow')
+                        $presetParams.Remove('Outflow')
+                        $presetParams.Amount = $Amount
+                    }
+                    if ($Date) {$presetParams.Date = $Date}
+                    if ($Token) {$presetParams.Token = $Token}
+                    if ($FlagColor) {$presetParams.FlagColor = $FlagColor}
+                    if ($Cleared) {$presetParams.Cleared = $Cleared}
+                    if ($Approved) {$presetParams.Approved = $Approved}
+                    if ($StoreAs) {$presetParams.StoreAs = $StoreAs}
 
-            # Override preset data with values for any provided named parameters
-            if ($Budget) {$presetParams.Budget = $Budget}
-            if ($Account) {$presetParams.Account = $Account}
-            if ($Payee) {$presetParams.Payee = $Payee}
-            if ($Category) {$presetParams.Category = $Category}
-            if ($Memo) {$presetParams.Memo = $Memo}
-            if ($Outflow) {
-                $presetParams.Remove('Inflow')
-                $presetParams.Remove('Amount')
-                $presetParams.Outflow = $Outflow
-            } elseif ($Inflow) {
-                $presetParams.Remove('Outflow')
-                $presetParams.Remove('Amount')
-                $presetParams.Inflow = $Inflow
-            } elseif ($Amount) {
-                $presetParams.Remove('Inflow')
-                $presetParams.Remove('Outflow')
-                $presetParams.Amount = $Amount
+                    Add-YnabTransaction @presetParams
+                }
             }
-            if ($Date) {$presetParams.Date = $Date}
-            if ($Token) {$presetParams.Token = $Token}
-            if ($FlagColor) {$presetParams.FlagColor = $FlagColor}
-            if ($Cleared) {$presetParams.Cleared = $Cleared}
-            if ($Approved) {$presetParams.Approved = $Approved}
-            if ($StoreAs) {$presetParams.StoreAs = $StoreAs}
-
-            Add-YnabTransaction @presetParams
         } else {
             # Get the budget details
             if (!$Budget) {
                 $Budget = Read-Host 'Budget'
             }
-            $budgets = Get-YnabBudget -ListAll -Token $Token
-            $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
+            $budgets = [Array](Get-YnabBudget -ListAll -Token $Token)
+            $budgetId = ([Array]$budgets).Where{$_.Budget -like $Budget}.BudgetID
 
             # Get the account details
             if (!$Account) {
                 $Account = Read-Host 'Account'
             }
-            $accounts = Get-YnabAccount -Budget $Budget -Token $Token
+            $accounts = [Array](Get-YnabAccount -Budget $Budget -Token $Token)
             $accountId = $accounts.Where{$_.Account -eq $Account}.AccountID
 
             # Get the category details
             if (!$Category) {
                 $Category = Read-Host 'Category'
             }
-            $categories = (Get-YnabCategory -List -Budget $Budget -Token $Token).Categories
+            $categories = [Array]((Get-YnabCategory -List -Budget $Budget -Token $Token).Categories)
             $categoryId = $categories.Where{$_.Category -like $Category}.CategoryID
 
             # Set Amount if Outflow or Inflow is provided, use negative or positive absolute value respectively

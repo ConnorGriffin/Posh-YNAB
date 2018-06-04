@@ -46,7 +46,7 @@ function Get-YnabCategory {
     process {
         # Get the budget IDs if the budget was specified by name
         if ($BudgetName) {
-            $budgets = Get-YnabBudget -List -Token $Token
+            $budgets = [Array](Get-YnabBudget -List -Token $Token)
             $BudgetID = $budgets.Where{$_.Budget -like $BudgetName}.BudgetID
         }
 

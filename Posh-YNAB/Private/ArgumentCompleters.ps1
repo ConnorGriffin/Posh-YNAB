@@ -15,7 +15,7 @@ $budget = @{
         }
 
         # Get a list of all budgets
-        $budgets = Get-YnabBudget -Token $token -ListAll | Sort-Object Name
+        $budgets = [Array](Get-YnabBudget -Token $token -ListAll | Sort-Object Name)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -57,7 +57,7 @@ $account = @{
         }
 
         # Get a list of all accounts
-        $accounts = Get-YnabAccount -Budget $budget -Token $token | Sort-Object Name
+        $accounts = [Array](Get-YnabAccount -Budget $budget -Token $token | Sort-Object Name)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -99,7 +99,7 @@ $category = @{
         }
 
         # Get a list of all accounts
-        $categories = (Get-YnabCategory -Budget $budget -Token $token).Categories | Sort-Object Category
+        $categories = [Array]((Get-YnabCategory -Budget $budget -Token $token).Categories | Sort-Object Category)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -141,7 +141,7 @@ $payee = @{
         }
 
         # Get a list of all accounts
-        $payees = (Get-YnabPayee -Budget $budget -Token $token) | Sort-Object Payee
+        $payees = [Array]((Get-YnabPayee -Budget $budget -Token $token) | Sort-Object Payee)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -164,7 +164,7 @@ $preset = @{
     ScriptBlock = {
         param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
         # Get a list of all accounts
-        $presets = (Get-YnabTransactionPreset -List).GetEnumerator() | Sort-Object Name
+        $presets = [Array]((Get-YnabTransactionPreset).GetEnumerator() | Sort-Object Preset)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -186,4 +186,4 @@ Register-ArgumentCompleter @budget
 Register-ArgumentCompleter @account
 Register-ArgumentCompleter @category
 Register-ArgumentCompleter @payee
-#Register-ArgumentCompleter @preset
+Register-ArgumentCompleter @preset

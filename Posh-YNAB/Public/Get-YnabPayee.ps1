@@ -30,7 +30,7 @@ function Get-YnabPayee {
 
     process {
         # Get the IDs of the budget and all payees
-        $budgets = Get-YnabBudget -ListAll -Token $Token
+        $budgets = [Array](Get-YnabBudget -ListAll -Token $Token)
         $budgetId = $budgets.Where{$_.Budget -eq $Budget}.BudgetID
         $payees = Invoke-RestMethod "$uri/budgets/$BudgetID/payees" -Headers $header
 

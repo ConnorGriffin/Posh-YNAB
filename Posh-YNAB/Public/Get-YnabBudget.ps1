@@ -27,7 +27,7 @@ function Get-YnabBudget {
 
         # Get all budgets here so we don't repeat it for each $Budget 
         if ($PsCmdlet.ParameterSetName -eq 'Detail') {
-            $budgets = Get-YnabBudget -ListAll -Token $Token
+            $budgets = [Array](Get-YnabBudget -ListAll -Token $Token)
         }
     }
 
@@ -38,7 +38,7 @@ function Get-YnabBudget {
                 # Return a list of budgets if no ID is specified or if ListAvailable is supplied
                 $response = Invoke-RestMethod "$uri/budgets" -Headers $header
                 if ($response) {
-                    $response.data.budgets.ForEach{
+                    ([Array]$response.data.budgets).ForEach{
                         [PSCustomObject]@{
                             Budget = $_.name
                             LastModified = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()

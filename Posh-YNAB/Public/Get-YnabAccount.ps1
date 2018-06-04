@@ -43,7 +43,7 @@ function Get-YnabAccount {
 
     process {
         # Get the budget and account data
-        $budgets = Get-YNABBudget -ListAll -Token $Token
+        $budgets = [Array](Get-YNABBudget -ListAll -Token $Token)
         $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
         $accounts = Invoke-RestMethod "$uri/budgets/$budgetId/accounts" -Headers $header
 
@@ -62,7 +62,7 @@ function Get-YnabAccount {
             'Detail' {
                 # Return account details for each account specified
                 foreach ($accountName in $Account) {
-                    $data = $accounts.data.accounts.Where{$_.Name -eq $accountName}
+                    $data = ([Array]$accounts.data.accounts).Where{$_.Name -eq $accountName}
                     if ($data) {
                         Get-ParsedAccountJson $data -NoParse:$NoParse
                     }
