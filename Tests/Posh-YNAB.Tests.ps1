@@ -1,3 +1,5 @@
+Import-Module .\Posh-YNAB\Posh-YNAB.psd1
+
 $testPreset = 'Test Preset'
 $testBudget = 'Test Budget'
 $testAccount = 'Test Account'
