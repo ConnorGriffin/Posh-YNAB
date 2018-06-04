@@ -35,9 +35,6 @@ function Get-YnabAccount {
     )
 
     begin {
-        Write-Verbose "Get-YnabAccount.ParameterSetName: $($PsCmdlet.ParameterSetName)"
-        
-        # Set the default header value for Invoke-RestMethod
         $header = Get-Header $Token
     }
 
