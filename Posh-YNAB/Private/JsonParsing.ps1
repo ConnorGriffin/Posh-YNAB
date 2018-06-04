@@ -147,7 +147,6 @@ function Get-ParsedTransactionJson {
     )
 
     begin {
-        Write-Verbose "ParameterSetName: $($PsCmdlet.ParameterSetName)"
         $parsedData = @()
     }
 
@@ -239,6 +238,7 @@ function Get-ParsedTransactionJson {
     }
 
     end {
+        $parsedData.PSObject.TypeNames.Insert(0,'Ynab.Transaction')
         $parsedData
     }
 }
