@@ -24,7 +24,7 @@ GUID = 'dad5786e-2340-4a54-a254-a540f507f3de'
 Author = 'Connor Griffin'
 
 # Company or vendor of this module
-CompanyName = ''
+CompanyName = 'ConnorCG'
 
 # Copyright statement for this module
 Copyright = '(c) 2018 Connor Griffin. All rights reserved.'
@@ -33,7 +33,7 @@ Copyright = '(c) 2018 Connor Griffin. All rights reserved.'
 Description = 'PowerShell Implementation for YNAB API'
 
 # Minimum version of the Windows PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '4.0'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -107,13 +107,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('Finance','YNAB','Budget','API','REST')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/ConnorGriffin/Posh-YNAB/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/ConnorGriffin/Posh-YNAB'
 
         # A URL to an icon representing this module.
         # IconUri = ''
@@ -126,7 +126,7 @@ PrivateData = @{
 } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-# HelpInfoURI = ''
+HelpInfoURI = 'https://github.com/ConnorGriffin/Posh-YNAB/blob/master/README.md'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 # DefaultCommandPrefix = ''
