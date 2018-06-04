@@ -12,7 +12,7 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.0'
+ModuleVersion = '0.1.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -63,11 +63,10 @@ PowerShellVersion = '4.0'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-FormatsToProcess = @('Formats\Ynab.Account.ps1xml',
-                     'Formats\Ynab.Payee.ps1xml',
-                     'Formats\Ynab.PayeeWithLocation.ps1xml',
-                     'Formats\Ynab.Transaction.ps1xml')
-
+FormatsToProcess = @('.\Formats\Ynab.Account.ps1xml',
+                     '.\Formats\Ynab.Payee.ps1xml',
+                     '.\Formats\Ynab.PayeeWithLocation.ps1xml',
+                     '.\Formats\Ynab.Transaction.ps1xml')
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
 
