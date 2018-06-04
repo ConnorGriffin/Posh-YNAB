@@ -1,10 +1,11 @@
 [cmdletBinding()]
-param($Phase)
+param(
+    [String]$Phase='Build',
+    [Switch]$WhatIf
+)
 
 Switch ($Phase) {
-    'Install' {
-    }
     'Build' {
-        Publish-Module -Path ./Posh-YNAB/ -NugetApiKey $ENV:PSGalleryAPIKey
+        Publish-Module -Path ./Posh-YNAB/ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
     }
 }
