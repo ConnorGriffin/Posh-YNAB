@@ -1,10 +1,9 @@
 $script:moduleName = 'Posh-YNAB'
 # Get the PSD1 data for this module
-$psd1 = Import-LocalizedData -BaseDirectory $PSScriptRoot\$moduleName -FileName (
-    Get-ChildItem -Path $PSScriptRoot\$moduleName\*.psd1).Name
+$psd1 = Import-LocalizedData -BaseDirectory $PSScriptRoot\$moduleName -FileName (Get-ChildItem -Path $PSScriptRoot\$moduleName\*.psd1).Name
 
 $moduleVersion = $psd1.ModuleVersion
-$localModPath = $env:PSModulePath.Split(';') | Where {$_ -match 'Documents'}
+$localModPath = $env:PSModulePath.Split(';') | Where-Object {$_ -match 'Documents'}
 
 Deploy Module {
     By PSGalleryModule {

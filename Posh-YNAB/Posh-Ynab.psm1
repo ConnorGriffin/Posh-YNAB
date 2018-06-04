@@ -1,7 +1,5 @@
 # Set module-scoped variables used by the module in other places
-$parameters = @('BudgetName','BudgetID','AccountName','AccountID',
-                'CategoryName','CategoryID','PayeeName','PayeeID',
-                'PresetName','Token')
+$parameters = @('Budget','Account','Category','Payee','Preset','Token')
 $moduleRoot = $PSScriptRoot
 $moduleName = 'Posh-YNAB'
 $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
@@ -63,6 +61,5 @@ $paramsByFunction = $publicFunctions.ForEach{
 
 # Import private functions, nothing fancy needed here
 (Get-ChildItem "$PSScriptRoot\Private\*.ps1").ForEach{
-    try {. $_.FullName}
-    catch {Write-Error -Message "Failed to import function $_"}
+    . $_.FullName
 }

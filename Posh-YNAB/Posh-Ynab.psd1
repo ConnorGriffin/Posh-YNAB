@@ -12,7 +12,7 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.6'
+ModuleVersion = '0.1.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,7 +24,7 @@ GUID = 'dad5786e-2340-4a54-a254-a540f507f3de'
 Author = 'Connor Griffin'
 
 # Company or vendor of this module
-CompanyName = ''
+CompanyName = 'ConnorCG'
 
 # Copyright statement for this module
 Copyright = '(c) 2018 Connor Griffin. All rights reserved.'
@@ -33,7 +33,7 @@ Copyright = '(c) 2018 Connor Griffin. All rights reserved.'
 Description = 'PowerShell Implementation for YNAB API'
 
 # Minimum version of the Windows PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '4.0'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -63,22 +63,25 @@ Description = 'PowerShell Implementation for YNAB API'
 # TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-# FormatsToProcess = @()
+FormatsToProcess = @('Formats\Ynab.Account.ps1xml',
+                     'Formats\Ynab.Payee.ps1xml',
+                     'Formats\Ynab.PayeeWithLocation.ps1xml',
+                     'Formats\Ynab.Transaction.ps1xml')
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = @('Add-YNABTransaction',
-                      'Add-YNABTransactionPreset',
-                      'Get-YNABTransactionPreset',
-                      'Remove-YNABTransactionPreset',
-                      'Get-YNABAccount',
-                      'Get-YNABBudget',
-                      'Get-YNABCategory',
-                      'Get-YNABPayee',
-                      'Get-YNABUser',
-                      'Set-YNABDefault')
+FunctionsToExport = @('Add-YnabTransaction',
+                      'Add-YnabTransactionPreset',
+                      'Get-YnabTransactionPreset',
+                      'Remove-YnabTransactionPreset',
+                      'Get-YnabAccount',
+                      'Get-YnabBudget',
+                      'Get-YnabCategory',
+                      'Get-YnabPayee',
+                      'Get-YnabUser',
+                      'Set-YnabDefault')
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 #CmdletsToExport = @('*')
@@ -104,13 +107,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('Finance','YNAB','Budget','API','REST')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/ConnorGriffin/Posh-YNAB/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/ConnorGriffin/Posh-YNAB'
 
         # A URL to an icon representing this module.
         # IconUri = ''
@@ -123,7 +126,7 @@ PrivateData = @{
 } # End of PrivateData hashtable
 
 # HelpInfo URI of this module
-# HelpInfoURI = ''
+HelpInfoURI = 'https://github.com/ConnorGriffin/Posh-YNAB/blob/master/README.md'
 
 # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
 # DefaultCommandPrefix = ''

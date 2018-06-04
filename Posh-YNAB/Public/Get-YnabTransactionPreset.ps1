@@ -1,19 +1,19 @@
-function Get-YNABTransactionPreset {
+function Get-YnabTransactionPreset {
     <#
     .SYNOPSIS
     List transaction presets.
     .DESCRIPTION
     List transaction presets from the preset file.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName 'Coffee'
+    Get-YnabTransactionPreset -PresetName 'Coffee'
     Get the Coffee preset.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName 'Coffee','Soda'
+    Get-YnabTransactionPreset -PresetName 'Coffee','Soda'
     Get the Coffee and Soda presets.
     .EXAMPLE
-    Get-YNABTransactionPreset -PresetName '*'
+    Get-YnabTransactionPreset -PresetName '*'
     Get all presets
-    .PARAMETER PresetName
+    .PARAMETER Preset
     The name of the preset to list, accepts a string or array of strings. Supports wildcards.
     .PARAMETER List
     Returns a list of all presets
@@ -21,8 +21,7 @@ function Get-YNABTransactionPreset {
     [CmdletBinding(DefaultParameterSetName='List')]
     param(
         [Parameter(Mandatory=$true,Position=0,ParameterSetName='LoadPreset')]
-        [Alias('Preset')]
-        [String[]]$PresetName,
+        [String[]]$Preset,
 
         [Parameter(ParameterSetName='List')]
         [Switch]$List
@@ -38,7 +37,7 @@ function Get-YNABTransactionPreset {
 
             switch ($PsCmdlet.ParameterSetName) {
                 'LoadPreset' {
-                    $PresetName.ForEach{
+                    $Preset.ForEach{
                         $name = $_
                         $presets.GetEnumerator().Where{$_.Name -like $name}
                     }
