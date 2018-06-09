@@ -9,8 +9,7 @@ environment:
   PSGalleryApiKey:
     secure: /Qj1Xjz6hSCGFUsIi//Tkub6pgdffO01qInzG0sCeafzMJjymzhgUOWFZIWa4L17
 install:
-  - ps: .\CodeDeploy.ps1 -Phase Install
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Install
 test_script:
-  - ps: .\CodeDeploy.ps1 -Phase Test
-build_script:
-  - ps: .\CodeDeploy.ps1 -Phase Build
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Test
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Build -WhatIf
