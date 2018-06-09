@@ -1,6 +1,6 @@
 [cmdletBinding()]
 param(
-    [String]$Phase='Build',
+    [String]$Phase,
     [Switch]$WhatIf
 )
 
@@ -39,9 +39,21 @@ Switch ($Phase) {
         # Install Node packages
         #ForEach ($Module in $NodeModules) {npm install -g $Module}
     }
+    'Test' {
+        $res = Invoke-Pester -Path ".\Tests" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
+        (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
+        if ($res.FailedCount -gt 0) {
+            throw "$($res.FailedCount) tests failed."
+        }
+    }
     'Build' {
         $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
         Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
-        Publish-Module -Path .\Posh-YNAB\ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
+        try {
+            Publish-Module -Path .\Posh-YNAB\ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
+        }
+        catch {
+            throw $error[0]
+        }
     }
 }
