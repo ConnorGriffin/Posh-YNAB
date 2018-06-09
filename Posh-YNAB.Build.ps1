@@ -18,7 +18,7 @@ Switch ($Phase) {
         # Install package providers for PowerShell Modules
         ForEach ($Provider in $PackageProviders) {
             If (!(Get-PackageProvider $Provider -ErrorAction SilentlyContinue)) {
-                Install-PackageProvider $Provider -Force -ForceBootstrap -Scope CurrentUser
+                $null = Install-PackageProvider $Provider -Force -ForceBootstrap -Scope CurrentUser
             }
         }
 
@@ -46,7 +46,7 @@ Switch ($Phase) {
             throw "$($res.FailedCount) tests failed."
         }
     }
-    'Build' {
+    'Deploy' {
         $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
         Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
         try {
