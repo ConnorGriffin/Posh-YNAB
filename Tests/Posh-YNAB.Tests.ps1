@@ -1,4 +1,4 @@
-Import-Module .\Posh-YNAB\Posh-YNAB.psd1
+Import-Module .\Posh-YNAB\Posh-YNAB.psd1 -Force
 
 $testPreset = 'Test Preset'
 $testBudget = 'Test Budget'
