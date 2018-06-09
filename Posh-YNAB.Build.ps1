@@ -40,12 +40,11 @@ Switch ($Phase) {
         #ForEach ($Module in $NodeModules) {npm install -g $Module}
     }
     'Test' {
-        # Output all environment variables for testing purposes
-        Get-ChildItem Env:
-        
-        # Update the build version to match the module version
+        $commit = $env:APPVEYOR_REPO_COMMIT.Substring(0,8)
+
+        # Update the build version to match the module version, append the commit ID
         $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
-        Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
+        Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$commit"
 
         # Run the pester tests
         $res = Invoke-Pester -Path ".\Tests" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
