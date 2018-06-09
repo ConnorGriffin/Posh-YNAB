@@ -31,15 +31,17 @@ Switch ($Phase) {
         }
 
         # Install Chocolatey
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        #Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
         # Install Chocolatey packages
-        ForEach ($Package in $ChocolateyPackages) {choco install $Package -y --no-progress}
+        #ForEach ($Package in $ChocolateyPackages) {choco install $Package -y --no-progress}
 
         # Install Node packages
-        ForEach ($Module in $NodeModules) {npm install -g $Module}
+        #ForEach ($Module in $NodeModules) {npm install -g $Module}
     }
     'Build' {
-        Publish-Module -Path ./Posh-YNAB/ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
+        $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
+        Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
+        Publish-Module -Path .\Posh-YNAB\ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
     }
 }
