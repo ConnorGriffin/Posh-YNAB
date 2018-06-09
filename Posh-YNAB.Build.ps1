@@ -40,6 +40,11 @@ Switch ($Phase) {
         #ForEach ($Module in $NodeModules) {npm install -g $Module}
     }
     'Test' {
+        # Update the build version to match the module version
+        $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
+        Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion).$ENV:APPVEYOR_BUILD_NUMBER"
+
+        # Run the pester tests
         $res = Invoke-Pester -Path ".\Tests" -OutputFormat NUnitXml -OutputFile TestsResults.xml -PassThru
         (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestsResults.xml))
         if ($res.FailedCount -gt 0) {
@@ -47,8 +52,7 @@ Switch ($Phase) {
         }
     }
     'Deploy' {
-        $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
-        Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
+        # Deploy the module
         try {
             Publish-Module -Path .\Posh-YNAB\ -NugetApiKey $ENV:PSGalleryAPIKey -WhatIf:$WhatIf
         }
