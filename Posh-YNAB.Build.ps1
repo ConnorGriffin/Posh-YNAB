@@ -46,7 +46,7 @@ Switch ($Phase) {
             throw "$($res.FailedCount) tests failed."
         }
     }
-    'Build' {
+    'Deploy' {
         $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
         Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$ENV:APPVEYOR_BUILD_NUMBER"
         try {
