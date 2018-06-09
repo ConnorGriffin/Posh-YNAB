@@ -4,6 +4,8 @@ branches:
   - appveyor-testing
 pull_requests:
   do_not_increment_build_number: true
+#only_commits:
+#  message: /!deploy/
 image: WMF 5
 environment:
   PSGalleryApiKey:
