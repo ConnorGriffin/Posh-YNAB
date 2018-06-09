@@ -4,8 +4,8 @@ branches:
   - appveyor-testing
 pull_requests:
   do_not_increment_build_number: true
-#only_commits:
-#  message: /!deploy/
+only_commits:
+  message: /!deploy/
 image: WMF 5
 environment:
   PSGalleryApiKey:
@@ -14,4 +14,5 @@ install:
   - ps: .\Posh-YNAB.Build.ps1 -Phase Install
 test_script:
   - ps: .\Posh-YNAB.Build.ps1 -Phase Test
-  - ps: .\Posh-YNAB.Build.ps1 -Phase Build -WhatIf
+deploy_script:
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Deploy -WhatIf
