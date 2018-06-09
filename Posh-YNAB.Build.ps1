@@ -40,9 +40,8 @@ Switch ($Phase) {
         #ForEach ($Module in $NodeModules) {npm install -g $Module}
     }
     'Test' {
-        $commit = $env:APPVEYOR_REPO_COMMIT.Substring(0,8)
-
         # Update the build version to match the module version, append the commit ID
+        $commit = $env:APPVEYOR_REPO_COMMIT.Substring(0,8)
         $moduleInfo = Import-PowerShellDataFile -Path .\Posh-YNAB\Posh-YNAB.psd1
         Update-AppveyorBuild -Version "$($moduleInfo.ModuleVersion)-$commit"
 
