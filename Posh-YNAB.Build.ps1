@@ -18,7 +18,7 @@ Switch ($Phase) {
         # Install package providers for PowerShell Modules
         ForEach ($Provider in $PackageProviders) {
             If (!(Get-PackageProvider $Provider -ErrorAction SilentlyContinue)) {
-                Install-PackageProvider $Provider -Force -ForceBootstrap -Scope CurrentUser
+                $null = Install-PackageProvider $Provider -Force -ForceBootstrap -Scope CurrentUser
             }
         }
 
