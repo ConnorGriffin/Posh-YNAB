@@ -1,9 +1,12 @@
+Import-Module .\Posh-YNAB\Posh-YNAB.psd1
+
 $testPreset = 'Test Preset'
 $testBudget = 'Test Budget'
 $testAccount = 'Test Account'
 $testPayee = 'Test Payee'
 $testCategory = 'Test Category'
 $testMemo = 'Test Memo'
+$testOutflow = 10.25
 $testToken = 'Test Token'
 $testFlagColor = 'Red'
 
