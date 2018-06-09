@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva/branch/master?svg=true)](https://ci.appveyor.com/project/ConnorGriffin/posh-ynab/branch/master)
+
 # Posh-YNAB
 [YNAB API](https://api.youneedabudget.com/) Implementation in PowerShell.
 
