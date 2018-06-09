@@ -5,12 +5,11 @@ $moduleName = 'Posh-YNAB'
 $dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
-# Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used elsewhere
+# Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used by our autocompleters
 function Set-FunctionDefault {
-    Param(
+    param(
         $File,
-        $Parameters,
-        $Defaults
+        $Parameters
     )
 
     $params = @()
@@ -23,16 +22,8 @@ function Set-FunctionDefault {
         if ($functionParams.$paramName) {
             # If the parameter is accepted by the function, add it to an array
             $params += $paramName
-
-            # Set the default value for the function:parameter pair if Defaults contains one
-            if ($Defaults) {
-                $default = $Defaults.GetEnumerator().Where{$_.Name -eq $paramName}.Value
-                if ($default) {
-                    $global:PSDefaultParameterValues["$($File.BaseName):$paramName"] = $default
                 }
             }
-        }
-    }
 
     # Return an object with the function and its accepted parameters. This is used by ArgumentCompleters
     [PSCustomObject]@{
@@ -44,8 +35,13 @@ function Set-FunctionDefault {
 # Create Profiles path if it does not exist, if it does, try importing the config
 $profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
 if (Test-Path $profilePath) {
-    # Import the config, if one has been set
-    try {$defaults = Import-Clixml "$profilePath\Defaults.xml"}
+    # Import the config, if one has been set, then set the default parameters 
+    try {
+        $defaults = Import-Clixml "$profilePath\Defaults.xml"
+        $defaults.GetEnumerator().ForEach{
+            $global:PSDefaultParameterValues["*Ynab*:$($_.Key)"] = $_.Value
+        }
+    }
     catch {Write-Error "Failed to import $profilePath\Defaults.xml"}
 } else {
     New-Item -Path $profilePath -Type Directory | Out-Null
@@ -55,8 +51,7 @@ if (Test-Path $profilePath) {
 $publicFunctions = (Get-ChildItem "$PSScriptRoot\Public\*.ps1")
 $paramsByFunction = $publicFunctions.ForEach{
     . $_.Fullname
-    Set-FunctionDefault $_ $parameters $defaults
-    #Export-ModuleMember -Function $_.BaseName
+    Set-FunctionDefault $_ $parameters
 }
 
 # Import private functions, nothing fancy needed here
