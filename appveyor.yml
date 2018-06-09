@@ -1,0 +1,39 @@
+build: off
+
+# Only build the master branch
+branches:
+  only:
+    - master
+
+# Including commits affecting specific files (GitHub only). More details here: https://www.appveyor.com/docs/appveyor-yml/
+only_commits:
+  files:
+    - Posh-YNAB/
+
+# Do not build on tags (GitHub and BitBucket)
+skip_tags: true
+
+# PR testing doens't increment build number
+pull_requests:
+  do_not_increment_build_number: true
+
+# Build worker image (VM template)
+image: WMF 5
+
+# environment variables
+environment:
+  # PowerShell Galery encrypted API key
+  PSGalleryApiKey:
+    secure: /Qj1Xjz6hSCGFUsIi//Tkub6pgdffO01qInzG0sCeafzMJjymzhgUOWFZIWa4L17
+
+# scripts that run after cloning repository
+install:
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Install
+
+# to run your custom scripts instead of automatic tests
+test_script:
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Test
+
+# to run your custom scripts instead of automatic tests
+deploy_script:
+  - ps: .\Posh-YNAB.Build.ps1 -Phase Deploy
