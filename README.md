@@ -70,8 +70,6 @@ Date                 Amount Memo           Cleared   Approved FlagColor Payee  C
 * Get-YnabTransaction, implement a filter, or maybe Find-YnabTransaction
 * Pipeline idea/goal - store an already posted transaction as a preset: Get-YnabTransaction <transaction criteria> | Add-YnabTransactionPreset
 * Add testing to the build process, don't publish if tests fail
-* Add badges based on tests
-* Test all pull requests
 * Add about_helptopic (https://msdn.microsoft.com/en-us/library/dd878343(v=vs.85).aspx)
 * Support inflow (To Be Budgeted) transaction
 
@@ -92,6 +90,8 @@ Date                 Amount Memo           Cleared   Approved FlagColor Payee  C
 * Build ArgumentCompleters for all applicable parameters
 * Publish to PSGallery, integrate with some kind of CI/CD (look into [this](https://github.com/LawrenceHwang/powershell-ci-pipeline-with-aws))
 * Change all *ID and *Name parameters to just the rootname (CategoryID is deleted, CategoryName becomes Category)
+* Add badges based on tests
+* Test all pull requests
 
 ### Endpoint Progress
 
