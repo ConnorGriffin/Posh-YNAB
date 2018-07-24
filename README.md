@@ -1,5 +1,5 @@
 # Posh-YNAB
-[![Build status](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva/branch/master?svg=true)](https://ci.appveyor.com/project/ConnorGriffin/posh-ynab/branch/master) 
+[![Build status](https://ci.appveyor.com/api/projects/status/32r7s2skrgm9ubva?svg=true)](https://ci.appveyor.com/project/ConnorGriffin/posh-ynab) 
 [![PSG Version](https://img.shields.io/powershellgallery/v/Posh-YNAB.svg)](https://www.powershellgallery.com/packages/Posh-YNAB)
 [![PSG Downloads](https://img.shields.io/powershellgallery/dt/Posh-YNAB.svg)](https://www.powershellgallery.com/packages/Posh-YNAB)
 
