@@ -12,10 +12,10 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.1.2'
+ModuleVersion = '0.2.1'
 
 # Supported PSEditions
-# CompatiblePSEditions = @()
+CompatiblePSEditions = @('Core', 'Desktop')
 
 # ID used to uniquely identify this module
 GUID = 'dad5786e-2340-4a54-a254-a540f507f3de'
