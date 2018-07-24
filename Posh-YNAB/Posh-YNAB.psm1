@@ -2,7 +2,6 @@
 $parameters = @('Budget','Account','Category','Payee','Preset','Token')
 $moduleRoot = $PSScriptRoot
 $moduleName = 'Posh-YNAB'
-$dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
 # Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used by our autocompleters
