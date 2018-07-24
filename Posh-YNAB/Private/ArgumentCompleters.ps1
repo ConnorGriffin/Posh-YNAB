@@ -15,7 +15,7 @@ $budget = @{
         }
 
         # Get a list of all budgets
-        $budgets = [Array](Get-YnabBudget -Token $token -ListAll | Sort-Object Name)
+        $budgets = [Array](Get-YnabBudget -Token $token -ListAll | Sort-Object Budget)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
@@ -57,7 +57,7 @@ $account = @{
         }
 
         # Get a list of all accounts
-        $accounts = [Array](Get-YnabAccount -Budget $budget -Token $token | Sort-Object Name)
+        $accounts = [Array](Get-YnabAccount -Budget $budget -Token $token | Sort-Object Account)
 
         # Trim quotes from the $wordToComplete
         $wordMatch = $wordToComplete.Trim("`"`'")
