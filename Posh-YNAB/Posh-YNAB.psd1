@@ -15,7 +15,7 @@ RootModule = 'Posh-YNAB.psm1'
 ModuleVersion = '0.2.1'
 
 # Supported PSEditions
-CompatiblePSEditions = @('Core', 'Desktop')
+# CompatiblePSEditions = @('Core', 'Desktop')
 
 # ID used to uniquely identify this module
 GUID = 'dad5786e-2340-4a54-a254-a540f507f3de'
@@ -106,7 +106,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('Finance','YNAB','Budget','API','REST')
+        Tags = @('Finance', 'YNAB', 'Budget', 'API', 'REST', 'PSEdition_Core', 'PSEdition_Desktop')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/ConnorGriffin/Posh-YNAB/blob/master/LICENSE'
