@@ -2,7 +2,6 @@
 $parameters = @('Budget','Account','Category','Payee','Preset','Token')
 $moduleRoot = $PSScriptRoot
 $moduleName = 'Posh-YNAB'
-$dateFormat = 'yyyy-MM-ddTHH:mm:ss+00:00'
 $uri = 'https://api.youneedabudget.com/v1'
 
 # Define our custom Set-FunctionDefaults function, which sets default parameters and outputs function data to be used by our autocompleters
@@ -32,12 +31,19 @@ function Set-FunctionDefault {
     }
 }
 
+
+# Determine profile path by platform
+if ($IsLinux -or $IsMacOS) {
+    $profilePath = Join-Path $HOME .config/Posh-YNAB/
+} else {
+    $profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
+}
+
 # Create Profiles path if it does not exist, if it does, try importing the config
-$profilePath = "$ENV:APPDATA\PSModules\Posh-YNAB"
 if (Test-Path $profilePath) {
     # Import the config, if one has been set, then set the default parameters 
     try {
-        $defaults = Import-Clixml "$profilePath\Defaults.xml"
+        $defaults = Import-Clixml (Join-Path $profilePath Defaults.xml)
         $defaults.GetEnumerator().ForEach{
             $global:PSDefaultParameterValues["*Ynab*:$($_.Key)"] = $_.Value
         }

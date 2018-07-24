@@ -31,7 +31,7 @@ function Get-YnabTransactionPreset {
 
     process {
         # Import the preset file if one exists
-        $presetFile = "$profilePath\Presets.xml"
+        $presetFile = Join-Path $profilePath Presets.xml
         if (Test-Path $presetFile) {
             $presets = Import-Clixml $presetFile
 

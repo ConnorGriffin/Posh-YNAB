@@ -41,9 +41,9 @@ function Get-YnabBudget {
                     ([Array]$response.data.budgets).ForEach{
                         [PSCustomObject]@{
                             Budget = $_.name
-                            LastModified = [datetime]::ParseExact($_.last_modified_on, $dateFormat, $null).ToLocalTime()
-                            FirstMonth = [datetime]::ParseExact($_.first_month,'yyyy-MM-dd',$null)
-                            LastMonth = [datetime]::ParseExact($_.last_month,'yyyy-MM-dd',$null)
+                            LastModified = $_.last_modified_on
+                            FirstMonth = $_.first_month
+                            LastMonth = $_.last_month
                             DateFormat = $_.date_format.format
                             CurrencyFormat = [Ordered]@{
                                 ISOCode = $_.currency_format.iso_code
@@ -72,9 +72,9 @@ function Get-YnabBudget {
                         $transactions = Get-ParsedTransactionJson $budgetData.transactions $budgetData.subtransactions -ParsedPayee $payees
                         [PSCustomObject]@{
                             Budget = $budgetData.name
-                            LastModified = [datetime]::ParseExact($budgetData.last_modified_on, $dateFormat, $null).ToLocalTime()
-                            FirstMonth = [datetime]::ParseExact($budgetData.first_month,'yyyy-MM-dd',$null)
-                            LastMonth = [datetime]::ParseExact($budgetData.last_month,'yyyy-MM-dd',$null)
+                            LastModified = $_.last_modified_on
+                            FirstMonth = $_.first_month
+                            LastMonth = $_.last_month
                             DateFormat = $budgetData.date_format.format
                             CurrencyFormat = [PSCustomObject]@{
                                 ISOCode = $budgetData.currency_format.iso_code

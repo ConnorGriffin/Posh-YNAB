@@ -17,9 +17,12 @@ function Set-YnabDefault {
     begin {}
     
     process {
-        # Encrypt the token if it is of type String
-        if ($Token.GetType().Name -eq 'String') {
-            $Token = $Token | ConvertTo-SecureString -AsPlainText -Force
+        # ConvertTo/From-SecureString is broken on Linux without a custom key: https://github.com/PowerShell/PowerShell/issues/1654
+        if (!$IsLinux -and !$IsMacOS) {
+            # Encrypt the token if it is of type String
+            if ($Token.GetType().Name -eq 'String') {
+                $Token = $Token | ConvertTo-SecureString -AsPlainText -Force
+            }
         }
 
         $data = @{
@@ -28,10 +31,10 @@ function Set-YnabDefault {
         }
 
         # Export the provided parameters for the module import to read them later
-        $data | Export-Clixml "$profilePath\Defaults.xml"
+        $data | Export-Clixml (Join-Path $profilePath Defaults.xml)
 
         # Re-import the module to reload the defaults
-        Import-Module "$moduleRoot\$moduleName.psm1" -Global -Force
+        Import-Module (Join-Path $moduleRoot "$moduleName.psm1") -Global -Force
     }
 
     end {}

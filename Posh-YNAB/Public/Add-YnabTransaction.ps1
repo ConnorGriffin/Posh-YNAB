@@ -272,7 +272,7 @@ function Add-YnabTransaction {
                 transaction = @{
                     account_id = $accountId
                     date = $Date.ToString('yyyy-MM-dd')
-                    amount = $Amount * 1000
+                    amount = [Int]($Amount * 1000)
                     category_id = $categoryId
                     approved = $Approved
                 }
