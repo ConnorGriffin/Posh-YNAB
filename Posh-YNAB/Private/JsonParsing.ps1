@@ -10,7 +10,7 @@ function Get-ParsedAccountJson {
         [Parameter(Mandatory,
                    ValueFromPipeline)]
         [Object[]]$Account,
-        
+
         [Switch]$NoParse
     )
 
@@ -45,7 +45,7 @@ function Get-ParsedAccountJson {
             } else {
                 $_
             }
-        } 
+        }
     }
 
     end {
@@ -281,7 +281,7 @@ function Get-ParsedCategoryJson {
                     $_.name -ne 'Internal Master Category'
                 }
             }
-            
+
             if (!$NoParse) {
                 # Parse the data if -NoParse is not specified
                 $parsedData += $includedCategories.ForEach{
