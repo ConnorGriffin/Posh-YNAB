@@ -15,6 +15,7 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Amount</PropertyName>
+                                <Alignment>Right</Alignment>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Memo</PropertyName>
