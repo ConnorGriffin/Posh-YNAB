@@ -67,7 +67,7 @@ function Add-YnabTransactionPreset {
                    ParameterSetName='Preset,Amount')]
         [Double]$Amount,
 
-        # Date for the trarnsaction. 
+        # Date for the trarnsaction.
         # Defaults to today.
         [Parameter(Position=7,
                    ValueFromPipelineByPropertyName)]
@@ -81,12 +81,11 @@ function Add-YnabTransactionPreset {
         # Flag color for the transaction.
         [Parameter(Position=9,
                    ValueFromPipelineByPropertyName)]
-        [ValidateSet('Red','Orange','Yellow','Green','Blue','Purple')]
+        [ValidateSet('Red','Orange','Yellow','Green','Blue','Purple','')]
         [String]$FlagColor,
 
         # If specified the transaction will be marked as CLeared.
-        [Parameter(Position=10,
-                   ValueFromPipelineByPropertyName)]
+        [Parameter(Position=10)]
         [Switch]$Cleared,
 
         # If specified the transaction will be marked as Approved.
@@ -104,7 +103,7 @@ function Add-YnabTransactionPreset {
         }
 
         # Import the preset file if one exists
-        $presetFile = "$profilePath\Presets.xml"
+        $presetFile = Join-Path $profilePath Presets.xml
         if (Test-Path $presetFile) {
             $presets = Import-Clixml $presetFile
         } else {
@@ -116,21 +115,21 @@ function Add-YnabTransactionPreset {
         # Remove the preset from the hashtable (does nothing if it does not exist)
         $presets.Remove($Preset)
 
-        # Add all of the parameter values to a hashtable. Can't use $PSBoundParameters because it breaks pipeline support :( 
+        # Add all of the parameter values to a hashtable. Can't use $PSBoundParameters because it breaks pipeline support :(
         $data = @{
-            Budget = $Budget 
-            Account = $Account 
+            Budget = $Budget
+            Account = $Account
             Payee = $Payee
-            Category = $Category 
-            Memo = $Memo 
-            Outflow = $Outflow 
-            Inflow = $Inflow 
-            Amount = ($Amount * 1000)
-            Date = $Date 
-            Token = $Token 
-            FlagColor = $FlagColor 
-            Cleared = $Cleared 
-            Approved = $Approved 
+            Category = $Category
+            Memo = $Memo
+            Outflow = $Outflow
+            Inflow = $Inflow
+            Amount = $Amount
+            Date = $Date
+            Token = $Token
+            FlagColor = $FlagColor
+            Cleared = $Cleared
+            Approved = $Approved
         }
 
         # Determine null entries to remove (easier than only adding non-null to $data with a ton of ifs)
@@ -147,7 +146,7 @@ function Add-YnabTransactionPreset {
 
         # Add the preset data to the presets hashtable, then export to $presetFile
         $presets += @{$Preset = $data}
-    } 
+    }
 
     end {
         $presets | Export-Clixml $presetFile
