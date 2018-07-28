@@ -8,8 +8,8 @@ $budget = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Token"]) {
+            $token = $global:PSDefaultParameterValues["*Ynab*:Token"]
         } else {
             return
         }
@@ -41,8 +41,8 @@ $account = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Token"]) {
+            $token = $global:PSDefaultParameterValues["*Ynab*:Token"]
         } else {
             return
         }
@@ -50,8 +50,8 @@ $account = @{
         # Get the budget name from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Budget) {
             $budget = $fakeBoundParameter.Budget
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
-            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["*Ynab*:Budget"]
         } else {
             return
         }
@@ -83,8 +83,8 @@ $category = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Token"]) {
+            $token = $global:PSDefaultParameterValues["*Ynab*:Token"]
         } else {
             return
         }
@@ -92,8 +92,8 @@ $category = @{
         # Get the budget name from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Budget) {
             $budget = $fakeBoundParameter.Budget
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
-            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["*Ynab*:Budget"]
         } else {
             return
         }
@@ -125,8 +125,8 @@ $payee = @{
         # Get the token value from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Token) {
             $token = $fakeBoundParameter.Token
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Token"]) {
-            $token = $global:PSDefaultParameterValues["${commandName}:Token"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Token"]) {
+            $token = $global:PSDefaultParameterValues["*Ynab*:Token"]
         } else {
             return
         }
@@ -134,8 +134,8 @@ $payee = @{
         # Get the budget name from the pipeline or PSDefaultParamterValues
         if ($fakeBoundParameter.Budget) {
             $budget = $fakeBoundParameter.Budget
-        } elseif ($global:PSDefaultParameterValues["${commandName}:Budget"]) {
-            $budget = $global:PSDefaultParameterValues["${commandName}:Budget"]
+        } elseif ($global:PSDefaultParameterValues["*Ynab*:Budget"]) {
+            $budget = $global:PSDefaultParameterValues["*Ynab*:Budget"]
         } else {
             return
         }

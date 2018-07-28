@@ -12,7 +12,7 @@
 RootModule = 'Posh-YNAB.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.2.1'
+ModuleVersion = '0.2.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @('Core', 'Desktop')
@@ -72,6 +72,7 @@ FormatsToProcess = @('.\Formats\Ynab.Account.ps1xml',
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @('Add-YnabTransaction',
+                      'Get-YnabTransaction',
                       'Add-YnabTransactionPreset',
                       'Get-YnabTransactionPreset',
                       'Remove-YnabTransactionPreset',
@@ -118,7 +119,9 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = @('Added Cmdlet: Get-YnabTransaction.',
+                         'Fixed broken Tab Complete functionality.',
+                         'Fixed some stray path issues for Mac/Linux.')
 
     } # End of PSData hashtable
 
