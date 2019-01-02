@@ -300,7 +300,7 @@ function Get-ParsedCategoryJson {
                             Balance = ([double]$_.balance / 1000)
                             GoalType = $_.goal_type
                             GoalCreationMonth = $_.goal_creation_month
-                            GoalTarget = $_.goal_target
+                            GoalTarget = ([double]$_.goal_target / 1000)
                             GoalTargetMonth = $_.goal_target_month
                             Hidden = $_.hidden
                             CategoryID = $_.id
