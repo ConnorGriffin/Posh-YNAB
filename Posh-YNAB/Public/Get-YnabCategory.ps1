@@ -23,7 +23,15 @@ function Get-YnabCategory {
                    ValueFromPipelineByPropertyName,
                    ParameterSetName='Detail')]
         [String[]]$Category,
-
+		
+		[Parameter(ValueFromPipelineByPropertyName,
+                   ParameterSetName='Month')]
+        [String[]]$Month,
+		
+		[Parameter(ValueFromPipelineByPropertyName,
+                   ParameterSetName='Month')]
+        [String[]]$CategoryID,
+		
         [Parameter(ValueFromPipelineByPropertyName,
                    ParameterSetName='List')]
         [Switch]$ListAll,
@@ -49,7 +57,12 @@ function Get-YnabCategory {
         # Get the budget and category data
         $budgets = [Array](Get-YnabBudget -ListAll -Token $Token)
         $budgetId = $budgets.Where{$_.Budget -like $Budget}.BudgetID
-        $categories = Invoke-RestMethod "$uri/budgets/$budgetId/categories" -Headers $header
+
+		if($Month){
+			$categories = Invoke-RestMethod "$uri/budgets/$budgetId/months/$Month/categories/$CategoryID" -Headers $header
+		}else{
+			$categories = Invoke-RestMethod "$uri/budgets/$budgetId/categories" -Headers $header
+		}
 
         switch ($PsCmdlet.ParameterSetName) {
             'List' {
@@ -65,6 +78,12 @@ function Get-YnabCategory {
                     Get-ParsedCategoryJson $data -NoParse:$NoParse
                 }
             }
+			'Month' {
+                # Return category details for a single category for a given month
+                if ($categories) {
+                    Get-ParsedCategoryJson $categories.data.category -IncludeHidden:$IncludeHidden -NoParse:$NoParse
+                }
+			}
         }
     }
 }
