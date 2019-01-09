@@ -22,7 +22,14 @@ function Get-YnabCategory {
         [Parameter(Mandatory,
                    ValueFromPipelineByPropertyName,
                    ParameterSetName='Detail')]
+        [Parameter(Mandatory,
+                   ValueFromPipelineByPropertyName,
+                   ParameterSetName='Month')]
         [String[]]$Category,
+
+        [Parameter(ValueFromPipelineByPropertyName,
+                   ParameterSetName='Month')]
+        [Datetime[]]$Month,
 
         [Parameter(ValueFromPipelineByPropertyName,
                    ParameterSetName='List')]
@@ -65,6 +72,23 @@ function Get-YnabCategory {
                     Get-ParsedCategoryJson $data -NoParse:$NoParse
                 }
             }
+            'Month' {
+                # Return category details for a each given category and month
+                foreach ($categoryName in $Category) {
+                    $categoryId = ([Array]$categories.data.category_groups.categories).Where{$_.Name -eq $categoryName}.id
+                    
+                    # Convert dates as entered into a unique list of months (ex: 2018-01-01 and 2018-01-04 are merged)
+                    $dates = $Month | ForEach-Object {
+                        Get-Date $_ -Day 1 -Format 'yyyy-MM-dd'
+                    } | Sort-Object -Unique
+
+                    # Return the category details for each specified month
+                    foreach ($date in $dates) {
+                        $categoryData = Invoke-RestMethod "$uri/budgets/$budgetId/months/$date/categories/$categoryId" -Headers $header
+                        Get-ParsedCategoryJson $categoryData.data.category -NoParse:$NoParse | Select-Object @{N='Month'; E={$date}}, *
+                    }
+                }
+			}
         }
     }
 }
